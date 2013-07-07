@@ -6,8 +6,10 @@
 ///<reference path="libs/easeljs.d.ts" />
 ///<reference path="libs/tweenjs.d.ts" />
 
-
+///<reference path="views/View.ts" />
 ///<reference path="views/StageView.ts" />
+///<reference path="views/DrawView.ts" />
+
 
 /**
  * Created with JetBrains PhpStorm.
@@ -22,6 +24,8 @@ class SacretGeometry {
 
     private stageView : StageView;
 
+    private drawView : DrawView;
+
     constructor( container : HTMLElement )  {
         console.log("hello world");
 
@@ -30,5 +34,12 @@ class SacretGeometry {
         // Stage Views handles keyboard listeners and resizes etc
         this.stageView       = new StageView(this.container);
         this.stageView.init();
+
+        this.drawView       = new DrawView(this.container);
+        this.drawView.stage = this.stageView.stage;
+        this.drawView.init();
+
+
+
     }
 }

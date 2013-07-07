@@ -3,9 +3,13 @@
     <properties>
       <sourceFilesUrls>
         <item url="file://$PROJECT_DIR$/scripts/Main.js" />
+        <item url="file://$PROJECT_DIR$/scripts/views/StageView.js" />
+        <item url="file://$PROJECT_DIR$/scripts/Main.js" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
+      <root url="file://$PROJECT_DIR$/scripts/Main.js" />
+      <root url="file://$PROJECT_DIR$/scripts/views/StageView.js" />
       <root url="file://$PROJECT_DIR$/scripts/Main.js" />
     </CLASSES>
     <SOURCES />
