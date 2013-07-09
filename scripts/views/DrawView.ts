@@ -19,11 +19,30 @@ class DrawView extends View
         this.fpsLabel.x = 400;
         this.fpsLabel.y = 0;
 
+        var centerCircle : CenterCircle = new CenterCircle(this.stage.canvas.width / 2 , this.stage.canvas.height / 2, this.stage);
+        this.stage.addChild(centerCircle);
+
         // start the tick and point it at the window so we can do some work before updating the stage:
         var _this = this;
         createjs.Ticker.addEventListener('tick', function():void {
             _this.tick();
         });
+
+
+        var _this : DrawView = this;
+
+        this.stage.addEventListener('mousedown', function(evt) :void {
+            _this.onMousePress(evt);
+        });
+    }
+
+    onMousePress(evt):void
+    {
+        console.log("cliickkk")
+        this._stage.addChild(this);
+       console.log(evt.stageX);
+        console.log(evt.stageY);
+
     }
 
 

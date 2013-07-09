@@ -4,11 +4,15 @@
 ///<reference path="libs/jquery.d.ts" />
 ///<reference path="libs/jqueryui.d.ts" />
 ///<reference path="libs/easeljs.d.ts" />
-///<reference path="libs/tweenjs.d.ts" />
+///<reference path="libs/tweenjs.d.ts" /> 
+///<reference path="libs/greensock.d.ts" />
 
 ///<reference path="views/View.ts" />
 ///<reference path="views/StageView.ts" />
 ///<reference path="views/DrawView.ts" />
+///<reference path="views/StageShape.ts" />
+///<reference path="views/CenterCircle.ts" />
+
 
 
 /**

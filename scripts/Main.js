@@ -215,10 +215,22 @@ var DrawView = (function (_super) {
         _super.prototype.stage.addChild(this.fpsLabel);
         this.fpsLabel.x = 400;
         this.fpsLabel.y = 0;
+        var centerCircle = new CenterCircle(this.stage.canvas.width / 2, this.stage.canvas.height / 2, this.stage);
+        this.stage.addChild(centerCircle);
         var _this = this;
         createjs.Ticker.addEventListener('tick', function () {
             _this.tick();
         });
+        var _this = this;
+        this.stage.addEventListener('mousedown', function (evt) {
+            _this.onMousePress(evt);
+        });
+    };
+    DrawView.prototype.onMousePress = function (evt) {
+        console.log("cliickkk");
+        this._stage.addChild(this);
+        console.log(evt.stageX);
+        console.log(evt.stageY);
     };
     DrawView.prototype.tick = function () {
         this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
@@ -226,6 +238,73 @@ var DrawView = (function (_super) {
     };
     return DrawView;
 })(View);
+var StageShape = (function (_super) {
+    __extends(StageShape, _super);
+    function StageShape(x, y, stage) {
+        this._stage = stage;
+        _super.call(this);
+    }
+    Object.defineProperty(StageShape.prototype, "stage", {
+        get: function () {
+            return this._stage;
+        },
+        set: function (stage) {
+            this._stage = stage;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return StageShape;
+})(createjs.Shape);
+var CenterCircle = (function (_super) {
+    __extends(CenterCircle, _super);
+    function CenterCircle(x, y, stage) {
+        _super.call(this, x, y, stage);
+        this._circleRadius = 50;
+        this.graphics.setStrokeStyle(5);
+        this.graphics.beginStroke("#000000");
+        this.graphics.beginFill("#ffffff").drawCircle(1, 1, this._circleRadius - 2);
+        this.x = x + this._circleRadius / 2;
+        this.y = y + this._circleRadius / 2;
+        var _this = this;
+        this.addEventListener('mousedown', function (evt) {
+            _this.onMousePress(evt);
+        });
+        this.helpLabel = new createjs.Text("Click and drag this circle to begin", "bold 18px Arial", "#FFF");
+        this.stage.addChild(this.helpLabel);
+        this.helpLabel.x = this.x + 100;
+        this.helpLabel.y = this.y;
+    }
+    CenterCircle.prototype.onMousePress = function (evt) {
+        this._stage.addChild(this);
+        var offset = {
+            x: this.x - evt.stageX,
+            y: this.y - evt.stageY
+        };
+        var _this = this;
+        evt.onMouseMove = function (ev) {
+            _this.x = ev.stageX + offset.x;
+            _this.y = ev.stageY + offset.y;
+        };
+    };
+    CenterCircle.prototype.onMouseOver = function (evt) {
+        document.body.style.cursor = 'move';
+        TweenLite.to(this, 0.5, {
+            scaleX: 1.2,
+            scaleY: 1.2,
+            ease: Quad.easeOut
+        });
+    };
+    CenterCircle.prototype.onMouseOut = function (evt) {
+        document.body.style.cursor = 'default';
+        TweenLite.to(this, 0.5, {
+            scaleX: 1,
+            scaleY: 1,
+            ease: Quad.easeOut
+        });
+    };
+    return CenterCircle;
+})(StageShape);
 var SacretGeometry = (function () {
     function SacretGeometry(container) {
         console.log("hello world");
