@@ -5,8 +5,11 @@ class View {
     public _stage : any;
 
     constructor( container ){
-        this._container = container;
+        this._container = container
+
+
     }
+
 
     public set stage ( stage : any )   {
         this._stage      = stage;

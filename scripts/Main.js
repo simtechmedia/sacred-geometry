@@ -196,11 +196,12 @@ var StageView = (function (_super) {
     };
     StageView.prototype.resize = function () {
         console.log("resize");
-        _super.prototype._stage.canvas.width = window.innerWidth;
-        _super.prototype._stage.canvas.height = window.innerHeight;
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
         this.w = this.canvas.width;
         this.h = this.canvas.height;
-        this.canvas.y = _super.prototype._stage.canvas.height / 2;
+        this.canvas.x = this.canvas.width / 2;
+        this.canvas.y = this.canvas.height / 2;
     };
     return StageView;
 })(View);
@@ -211,49 +212,78 @@ var DrawView = (function (_super) {
     }
     DrawView.prototype.init = function () {
         console.log("Drawview Init");
+        this.circlesContainer = new createjs.Container();
+        this.stage.addChild(this.circlesContainer);
         this.fpsLabel = new createjs.Text("-- fps", "bold 18px Arial", "#FFF");
-        _super.prototype.stage.addChild(this.fpsLabel);
+        this.stage.addChild(this.fpsLabel);
         this.fpsLabel.x = 400;
         this.fpsLabel.y = 0;
-        var centerCircle = new CenterCircle(this.stage.canvas.width / 2, this.stage.canvas.height / 2, this.stage);
-        this.stage.addChild(centerCircle);
+        var centerCircle = new CenterCircle(0, 0, this.circlesContainer);
+        centerCircle.removeSignal.addOnce(this.removeObject, this, 0);
+        this.circlesContainer.addChild(centerCircle);
         var _this = this;
         createjs.Ticker.addEventListener('tick', function () {
             _this.tick();
         });
+        this.stage.onMouseMove = function (evt) {
+            var currentMousePoint = new createjs.Point(evt.rawX, evt.rawY);
+            if(_this._activeShape) {
+            }
+        };
         var _this = this;
-        this.stage.addEventListener('mousedown', function (evt) {
-            _this.onMousePress(evt);
+        window.addEventListener('resize', function () {
+            _this.resize();
         });
+        this.resize();
     };
-    DrawView.prototype.onMousePress = function (evt) {
-        console.log("cliickkk");
-        this._stage.addChild(this);
-        console.log(evt.stageX);
-        console.log(evt.stageY);
+    DrawView.prototype.resize = function () {
+        console.log("stage resize");
+        this.circlesContainer.x = window.innerWidth / 2;
+        this.circlesContainer.y = window.innerHeight / 2;
+    };
+    DrawView.prototype.addCircle = function (x, y) {
+        var circleShape = new CircleShape(x, y, this.stage);
+        this.circlesContainer.addChild(circleShape);
+        this._activeShape = circleShape;
+    };
+    DrawView.prototype.removeObject = function (shape) {
+        this.addCircle(shape.x, shape.y);
+        this.circlesContainer.removeChild(shape);
     };
     DrawView.prototype.tick = function () {
         this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
-        _super.prototype.stage.update();
+        this.stage.update();
     };
     return DrawView;
 })(View);
 var StageShape = (function (_super) {
     __extends(StageShape, _super);
-    function StageShape(x, y, stage) {
-        this._stage = stage;
+    function StageShape(x, y, container) {
+        this._container = container;
         _super.call(this);
     }
-    Object.defineProperty(StageShape.prototype, "stage", {
+    Object.defineProperty(StageShape.prototype, "container", {
         get: function () {
-            return this._stage;
+            return this._container;
         },
-        set: function (stage) {
-            this._stage = stage;
+        set: function (container) {
+            this._container = container;
         },
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(StageShape.prototype, "currentMousePos", {
+        get: function () {
+            return this._currentMousePos;
+        },
+        set: function (point) {
+            this._currentMousePos = point;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    StageShape.prototype.update = function () {
+    };
     return StageShape;
 })(createjs.Shape);
 var CenterCircle = (function (_super) {
@@ -261,53 +291,84 @@ var CenterCircle = (function (_super) {
     function CenterCircle(x, y, stage) {
         _super.call(this, x, y, stage);
         this._circleRadius = 50;
+        this.removeSignal = new Signal();
+        this.removing = false;
         this.graphics.setStrokeStyle(5);
         this.graphics.beginStroke("#000000");
         this.graphics.beginFill("#ffffff").drawCircle(1, 1, this._circleRadius - 2);
-        this.x = x + this._circleRadius / 2;
-        this.y = y + this._circleRadius / 2;
         var _this = this;
         this.addEventListener('mousedown', function (evt) {
             _this.onMousePress(evt);
         });
         this.helpLabel = new createjs.Text("Click and drag this circle to begin", "bold 18px Arial", "#FFF");
-        this.stage.addChild(this.helpLabel);
+        this.container.addChild(this.helpLabel);
         this.helpLabel.x = this.x + 100;
         this.helpLabel.y = this.y;
     }
     CenterCircle.prototype.onMousePress = function (evt) {
-        this._stage.addChild(this);
-        var offset = {
-            x: this.x - evt.stageX,
-            y: this.y - evt.stageY
-        };
+        console.log("onMousePress");
+        this.removing = true;
+        this.container.addChild(this);
         var _this = this;
-        evt.onMouseMove = function (ev) {
-            _this.x = ev.stageX + offset.x;
-            _this.y = ev.stageY + offset.y;
-        };
+        TweenLite.to(this, 0.25, {
+            scaleX: 0.1,
+            scaleY: 0.1,
+            ease: Quad.easeOut,
+            onComplete: function () {
+                _this.removeSignal.dispatch(_this);
+            }
+        });
     };
     CenterCircle.prototype.onMouseOver = function (evt) {
-        document.body.style.cursor = 'move';
-        TweenLite.to(this, 0.5, {
-            scaleX: 1.2,
-            scaleY: 1.2,
-            ease: Quad.easeOut
+        if(!this.removing) {
+            TweenLite.to(this, 0.5, {
+                scaleX: 1.2,
+                scaleY: 1.2,
+                ease: Quad.easeOut
+            });
+            document.body.style.cursor = 'move';
+        }
+        if(this.container.contains(this.helpLabel)) {
+            this.removeHelp();
+        }
+    };
+    CenterCircle.prototype.removeHelp = function () {
+        var _this = this;
+        TweenLite.to(this.helpLabel, 0.5, {
+            alpha: 0,
+            ease: Quad.easeOut,
+            onComplete: function () {
+                _this.container.removeChild(_this.helpLabel);
+            }
         });
     };
     CenterCircle.prototype.onMouseOut = function (evt) {
-        document.body.style.cursor = 'default';
-        TweenLite.to(this, 0.5, {
-            scaleX: 1,
-            scaleY: 1,
-            ease: Quad.easeOut
-        });
+        if(!this.removing) {
+            document.body.style.cursor = 'default';
+            TweenLite.to(this, 0.5, {
+                scaleX: 1,
+                scaleY: 1,
+                ease: Quad.easeOut
+            });
+        }
     };
     return CenterCircle;
 })(StageShape);
+var CircleShape = (function (_super) {
+    __extends(CircleShape, _super);
+    function CircleShape(x, y, container) {
+        _super.call(this, x, y, container);
+        this.graphics.setStrokeStyle(5);
+        this.graphics.beginStroke("#000000");
+        this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(1, 1, 200);
+    }
+    CircleShape.prototype.update = function () {
+        console.log("circleshape update");
+    };
+    return CircleShape;
+})(StageShape);
 var SacretGeometry = (function () {
     function SacretGeometry(container) {
-        console.log("hello world");
         this.container = container;
         this.stageView = new StageView(this.container);
         this.stageView.init();

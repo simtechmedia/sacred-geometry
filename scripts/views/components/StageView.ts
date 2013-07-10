@@ -43,21 +43,21 @@ class StageView extends View
     /**
      * Resize event handler
      */
-    private resize() {
+    public resize() {
 
         console.log("resize");
         // Resize the canvas element
 
-        super._stage.canvas.width = window.innerWidth;
-        super._stage.canvas.height = window.innerHeight;
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
 
 
         this.w = this.canvas.width;
         this.h = this.canvas.height;
 
         // Content: centered
-        //canvas.x = stage.canvas.width / 2;
-        this.canvas.y = super._stage.canvas.height / 2;
+        this.canvas.x = this.canvas.width / 2;
+        this.canvas.y = this.canvas.height / 2;
 
     }
 
