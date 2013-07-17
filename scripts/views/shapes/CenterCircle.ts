@@ -25,7 +25,7 @@ class CenterCircle extends StageShape{
             _this.onMousePress(evt);
         });
 
-        this.helpLabel = new createjs.Text("Click and drag this circle to begin","bold 18px Arial","#FFF");
+        this.helpLabel = new createjs.Text("Click to begin","bold 18px Arial","#FFF");
         this.container.addChild(this.helpLabel);
         this.helpLabel.x = this.x + 100;
         this.helpLabel.y = this.y;

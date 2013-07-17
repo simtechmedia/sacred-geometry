@@ -212,12 +212,18 @@ var DrawView = (function (_super) {
     }
     DrawView.prototype.init = function () {
         console.log("Drawview Init");
+        this._currentMousePos = new Point(0, 0);
         this.circlesContainer = new createjs.Container();
         this.stage.addChild(this.circlesContainer);
+        this._shapesArray = [];
         this.fpsLabel = new createjs.Text("-- fps", "bold 18px Arial", "#FFF");
         this.stage.addChild(this.fpsLabel);
         this.fpsLabel.x = 400;
         this.fpsLabel.y = 0;
+        this._debugBox = new createjs.Text("-- debugBox", "bold 18px Arial", "#FFF");
+        this.stage.addChild(this._debugBox);
+        this._debugBox.x = 10;
+        this._debugBox.y = 10;
         var centerCircle = new CenterCircle(0, 0, this.circlesContainer);
         centerCircle.removeSignal.addOnce(this.removeObject, this, 0);
         this.circlesContainer.addChild(centerCircle);
@@ -226,8 +232,13 @@ var DrawView = (function (_super) {
             _this.tick();
         });
         this.stage.onMouseMove = function (evt) {
-            var currentMousePoint = new createjs.Point(evt.rawX, evt.rawY);
+            _this._currentMousePos.x = evt.rawX - window.innerWidth / 2;
+            _this._currentMousePos.y = evt.rawY - window.innerHeight / 2;
+            _this._debugBox.text = "xMouse: " + _this._currentMousePos.x + "," + _this._currentMousePos.y;
+            var currentMousePoint = new Point(evt.stageX, evt.stageY);
             if(_this._activeShape) {
+                _this._activeShape.currentMousePos = currentMousePoint;
+                _this._activeShape.update();
             }
         };
         var _this = this;
@@ -243,14 +254,27 @@ var DrawView = (function (_super) {
     };
     DrawView.prototype.addCircle = function (x, y) {
         var circleShape = new CircleShape(x, y, this.stage);
+        circleShape.onMouseClickedSignal.addOnce(this.resizeDone, this, 0);
         this.circlesContainer.addChild(circleShape);
         this._activeShape = circleShape;
+        this._shapesArray.push(circleShape);
+    };
+    DrawView.prototype.resizeDone = function () {
+        this._activeShape = null;
     };
     DrawView.prototype.removeObject = function (shape) {
         this.addCircle(shape.x, shape.y);
         this.circlesContainer.removeChild(shape);
     };
     DrawView.prototype.tick = function () {
+        for(var i = 0; i < this._shapesArray.length; i++) {
+            var currentShape = this._shapesArray[i];
+            if(currentShape.circleHitTest(this._currentMousePos)) {
+                currentShape.alpha = 0;
+            } else {
+                currentShape.alpha = 1;
+            }
+        }
         this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
         this.stage.update();
     };
@@ -300,7 +324,7 @@ var CenterCircle = (function (_super) {
         this.addEventListener('mousedown', function (evt) {
             _this.onMousePress(evt);
         });
-        this.helpLabel = new createjs.Text("Click and drag this circle to begin", "bold 18px Arial", "#FFF");
+        this.helpLabel = new createjs.Text("Click to begin", "bold 18px Arial", "#FFF");
         this.container.addChild(this.helpLabel);
         this.helpLabel.x = this.x + 100;
         this.helpLabel.y = this.y;
@@ -358,15 +382,58 @@ var CircleShape = (function (_super) {
     __extends(CircleShape, _super);
     function CircleShape(x, y, container) {
         _super.call(this, x, y, container);
+        this.onMouseClickedSignal = new Signal();
         this.graphics.setStrokeStyle(5);
         this.graphics.beginStroke("#000000");
         this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(1, 1, 200);
+        this.updating = true;
+        var _this = this;
+        this.addEventListener('mousedown', function (evt) {
+            _this.onMousePress(evt);
+        });
     }
     CircleShape.prototype.update = function () {
-        console.log("circleshape update");
+        this._radius = this.currentMousePos.distanceToPoint(new Point(this.x + window.innerWidth / 2, this.y + window.innerHeight / 2));
+        if(this.updating == true) {
+            this.graphics.clear();
+            this.graphics.setStrokeStyle(5);
+            this.graphics.beginStroke("#000000");
+            this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(0, 0, this._radius);
+        }
+    };
+    CircleShape.prototype.circleHitTest = function (point) {
+        if(point.distanceToPoint(new Point(this.x, this.x)) < this._radius) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+    CircleShape.prototype.onMouseOver = function (evt) {
+        console.log("this on over");
+        console.log(this);
+    };
+    CircleShape.prototype.onMousePress = function (evt) {
+        console.log("onMousePress");
+        this.onMouseClickedSignal.dispatch(null);
     };
     return CircleShape;
 })(StageShape);
+var Point = (function () {
+    function Point(_x, _y) {
+        this.x = _x;
+        this.y = _y;
+    }
+    Point.prototype.distanceToPoint = function (point) {
+        var xs;
+        var ys;
+        xs = point.x - this.x;
+        xs = xs * xs;
+        ys = point.y - this.y;
+        ys = ys * ys;
+        return Math.sqrt(xs + ys);
+    };
+    return Point;
+})();
 var SacretGeometry = (function () {
     function SacretGeometry(container) {
         this.container = container;

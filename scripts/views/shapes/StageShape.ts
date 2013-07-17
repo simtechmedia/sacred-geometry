@@ -2,7 +2,7 @@ class StageShape extends createjs.Shape{
 
     private _container : createjs.Container;
 
-    private _currentMousePos : createjs.Point;
+    private _currentMousePos : Point;
 
     constructor( x : number , y : number , container : any ){
         this._container = container;
@@ -18,11 +18,11 @@ class StageShape extends createjs.Shape{
         return this._container;
     }
 
-    public set currentMousePos ( point : createjs.Point ) {
+    public set currentMousePos ( point : Point ) {
         this._currentMousePos = point;
     }
 
-    public get currentMousePos () : createjs.Point
+    public get currentMousePos () : Point
     {
         return this._currentMousePos;
     }

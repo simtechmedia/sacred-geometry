@@ -51,7 +51,6 @@ class StageView extends View
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
 
-
         this.w = this.canvas.width;
         this.h = this.canvas.height;
 
