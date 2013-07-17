@@ -66,8 +66,10 @@ class DrawView extends View
             var currentMousePoint:Point = new Point( evt.stageX , evt.stageY );
 
             if(_this._activeShape) {
+
+                // This changes the radius of the circle ( adjusting it's size ) ;
                 _this._activeShape.currentMousePos = currentMousePoint;
-                _this._activeShape.update();
+                //_this._activeShape.update();
             }
         }
 
@@ -88,7 +90,7 @@ class DrawView extends View
 
     private addCircle( x , y ) : void
     {
-        var circleShape : CircleShape   = new CircleShape(x,y, this.stage)
+        var circleShape : CircleShape   = new CircleShape(x,y, this.stage, StageShape.createDisplayVO() )
         circleShape.onMouseClickedSignal.addOnce(this.resizeDone, this, 0);
         this.circlesContainer.addChild(circleShape);
         this._activeShape               = circleShape;
@@ -115,15 +117,12 @@ class DrawView extends View
     private tick():void
     {
 
-
         //for ( var shape : CircleShape  in this._shapesArray)
         for ( var i : number = 0 ; i < this._shapesArray.length ; i ++ ) {
            var currentShape : CircleShape =  this._shapesArray[i];
 
            if (  currentShape.circleHitTest( this._currentMousePos ) ) {
-               currentShape.alpha = 0;
-           } else {
-               currentShape.alpha = 1;
+               currentShape.highLight();
            }
             // Reupdating all the circles for now
             // need to change this

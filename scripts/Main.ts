@@ -15,6 +15,8 @@
 ///<reference path="views/shapes/CircleShape.ts" />
 ///<reference path="views/components/DrawView.ts" />
 ///<reference path="views/vo/Point.ts" />
+///<reference path="views/vo/DisplayVO.ts" />
+
 
 /**
  * Created with JetBrains PhpStorm.

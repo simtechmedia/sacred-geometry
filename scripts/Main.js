@@ -238,7 +238,6 @@ var DrawView = (function (_super) {
             var currentMousePoint = new Point(evt.stageX, evt.stageY);
             if(_this._activeShape) {
                 _this._activeShape.currentMousePos = currentMousePoint;
-                _this._activeShape.update();
             }
         };
         var _this = this;
@@ -253,7 +252,7 @@ var DrawView = (function (_super) {
         this.circlesContainer.y = window.innerHeight / 2;
     };
     DrawView.prototype.addCircle = function (x, y) {
-        var circleShape = new CircleShape(x, y, this.stage);
+        var circleShape = new CircleShape(x, y, this.stage, StageShape.createDisplayVO());
         circleShape.onMouseClickedSignal.addOnce(this.resizeDone, this, 0);
         this.circlesContainer.addChild(circleShape);
         this._activeShape = circleShape;
@@ -270,10 +269,9 @@ var DrawView = (function (_super) {
         for(var i = 0; i < this._shapesArray.length; i++) {
             var currentShape = this._shapesArray[i];
             if(currentShape.circleHitTest(this._currentMousePos)) {
-                currentShape.alpha = 0;
-            } else {
-                currentShape.alpha = 1;
+                currentShape.highLight();
             }
+            currentShape.update();
         }
         this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
         this.stage.update();
@@ -307,6 +305,16 @@ var StageShape = (function (_super) {
         configurable: true
     });
     StageShape.prototype.update = function () {
+    };
+    StageShape.createDisplayVO = function createDisplayVO(strokeWidth, hightlightStrokeWidth, strokecolour) {
+        if (typeof strokeWidth === "undefined") { strokeWidth = 5; }
+        if (typeof hightlightStrokeWidth === "undefined") { hightlightStrokeWidth = 10; }
+        if (typeof strokecolour === "undefined") { strokecolour = "#000000"; }
+        var displayVO = new DisplayVO();
+        displayVO.strokeWidth = strokeWidth;
+        displayVO.highlightStrokeWidth = hightlightStrokeWidth;
+        displayVO.strokeColour = strokecolour;
+        return displayVO;
     };
     return StageShape;
 })(createjs.Shape);
@@ -380,29 +388,40 @@ var CenterCircle = (function (_super) {
 })(StageShape);
 var CircleShape = (function (_super) {
     __extends(CircleShape, _super);
-    function CircleShape(x, y, container) {
+    function CircleShape(x, y, container, displayVO) {
         _super.call(this, x, y, container);
         this.onMouseClickedSignal = new Signal();
+        this._displayVO = displayVO;
         this.graphics.setStrokeStyle(5);
-        this.graphics.beginStroke("#000000");
+        this.graphics.beginStroke(this._displayVO.strokeColour);
         this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(1, 1, 200);
         this.updating = true;
+        this._strokeWidth = this._displayVO.strokeWidth;
         var _this = this;
         this.addEventListener('mousedown', function (evt) {
             _this.onMousePress(evt);
         });
     }
+    Object.defineProperty(CircleShape.prototype, "currentMousePos", {
+        set: function (point) {
+            _super.prototype.currentMousePos = point;
+            this._radius = _super.prototype.currentMousePos.distanceToPoint(new Point(this.x + window.innerWidth / 2, this.y + window.innerHeight / 2));
+        },
+        enumerable: true,
+        configurable: true
+    });
     CircleShape.prototype.update = function () {
-        this._radius = this.currentMousePos.distanceToPoint(new Point(this.x + window.innerWidth / 2, this.y + window.innerHeight / 2));
-        if(this.updating == true) {
-            this.graphics.clear();
-            this.graphics.setStrokeStyle(5);
-            this.graphics.beginStroke("#000000");
-            this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(0, 0, this._radius);
-        }
+        this.graphics.clear();
+        this.graphics.setStrokeStyle(this._strokeWidth);
+        this.graphics.beginStroke("#000000");
+        this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(0, 0, this._radius);
+        this._strokeWidth = this._displayVO.strokeWidth;
+    };
+    CircleShape.prototype.highLight = function () {
+        this._strokeWidth = this._displayVO.highlightStrokeWidth;
     };
     CircleShape.prototype.circleHitTest = function (point) {
-        if(point.distanceToPoint(new Point(this.x, this.x)) < this._radius) {
+        if(point.distanceToPoint(new Point(this.x, this.x)) < this._radius + this._displayVO.strokeWidth * 2) {
             return true;
         } else {
             return false;
@@ -433,6 +452,10 @@ var Point = (function () {
         return Math.sqrt(xs + ys);
     };
     return Point;
+})();
+var DisplayVO = (function () {
+    function DisplayVO() { }
+    return DisplayVO;
 })();
 var SacretGeometry = (function () {
     function SacretGeometry(container) {

@@ -32,7 +32,6 @@ class CenterCircle extends StageShape{
 
     }
 
-
     onMousePress(evt):void
     {
         console.log("onMousePress");
