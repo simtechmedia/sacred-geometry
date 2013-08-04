@@ -52,6 +52,17 @@ class StageShape extends createjs.Shape{
 
     }
 
+    public circleHitTest( point : Point , radius : number  , buffer : number = 10 ) : Boolean
+    {
+        if( point.distanceToPoint(new Point(this.x, this.y) ) < radius + buffer &&
+            point.distanceToPoint(new Point(this.x, this.y) ) > radius - buffer )
+        {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Helper Functio to return a VO for it's display
     // Might take this out later
     public static createDisplayVO( strokeWidth:number = 5, hightlightStrokeWidth : number = 10, strokecolour = "#000000") : DisplayVO

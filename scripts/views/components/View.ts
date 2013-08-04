@@ -6,8 +6,6 @@ class View {
 
     constructor( container ){
         this._container = container
-
-
     }
 
 

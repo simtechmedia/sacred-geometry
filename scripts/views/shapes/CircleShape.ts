@@ -10,17 +10,24 @@ class CircleShape extends StageShape
 
     private _displayVO       : DisplayVO;
 
-    public static STATE_ACTIVE      : String = "STATE_ACTIVE";           // state for when the circle is getting resized
+    public static STATE_ACTIVE      : String = "STATE_ACTIVE";        // state for when the circle is getting resized
+
     public static STATE_INAACTIVE   : String = "STATE_INACTIVE";      // when nothing's goign on
 
+
     constructor( x : number , y : number , container : createjs.Container, displayVO : DisplayVO ){
+
         super(x,y,container);
+
+        this.x = x;
+        this.y = y;
+        console.log( "CircleShape() current x = " + this.x + " y : " + this.y );
 
         this._displayVO         = displayVO;
 
         this.graphics.setStrokeStyle(5);
         this.graphics.beginStroke(this._displayVO.strokeColour);
-        this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(1,1,200);
+        this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(1,1,1);
         this.updating           = true;
 
         // Inits Stroke Width
@@ -30,6 +37,9 @@ class CircleShape extends StageShape
         this.addEventListener('mousedown', function(evt) :void {
             _this.onMousePress(evt);
         });
+
+        // Initilises as active ( starts resizing soon as it puts on stage , might change thi late )
+        this.currentState = CircleShape.STATE_ACTIVE;
     }
 
     /*
@@ -38,7 +48,7 @@ class CircleShape extends StageShape
     public set currentMousePos ( point : Point )
     {
         super.currentMousePos   = point;
-        this._radius = super.currentMousePos.distanceToPoint( new Point ( this.x + window.innerWidth / 2,this.y + window.innerHeight / 2 ) );
+        this._radius            = super.currentMousePos.distanceToPoint( new Point ( this.x + window.innerWidth / 2,this.y + window.innerHeight / 2 ) );
     }
 
     public update()
@@ -58,30 +68,19 @@ class CircleShape extends StageShape
         this._strokeWidth = this._displayVO.highlightStrokeWidth;
     }
 
-    // This is the test which determines is
-    // Mouse Pointer is within the radius of the circle
-    public circleHitTest( point : Point ) : Boolean
-    {
-        if( point.distanceToPoint(new Point(this.x, this.x) ) < this._radius + this._displayVO.strokeWidth * 2 )
-        {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public getAngleFromCenter ( point : Point ) : number
     {
         var reletiveX : number = point.x - this.x;
         var reletiveY : number = point.y - this.y;
-
-        var theta : number = Math.atan2(-reletiveY , -reletiveX);
+        var theta     : number = Math.atan2(-reletiveY , -reletiveX);
 
         if(theta < 0) {
             theta += 2*Math.PI;
         }
-
+        // Turns our you use radians and not angles, doh
         //var angle : number = theta * 180 / Math.PI ;
+
+        console.log( theta);
 
         return theta;
     }
@@ -90,8 +89,6 @@ class CircleShape extends StageShape
     {
         return this._radius;
     }
-
-
 
     onMouseOver(evt):void
     {
@@ -102,7 +99,7 @@ class CircleShape extends StageShape
     onMousePress(evt):void
     {
         console.log("onMousePress");
-        this.onMouseClickedSignal.dispatch(null);
+        this.onMouseClickedSignal.dispatch(this);
         //this.updating = false;
     }
 }

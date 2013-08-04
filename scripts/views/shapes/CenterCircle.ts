@@ -1,7 +1,7 @@
 
 class CenterCircle extends StageShape{
 
-    private _circleRadius   : number  = 50;
+    private _radius     : number  = 50;
 
     private _stage          : any;
 
@@ -15,7 +15,7 @@ class CenterCircle extends StageShape{
         super(x , y , stage);
         this.graphics.setStrokeStyle(5);
         this.graphics.beginStroke("#000000");
-        this.graphics.beginFill("#ffffff").drawCircle(1,1,this._circleRadius-2);
+        this.graphics.beginFill("#ffffff").drawCircle(1,1,this._radius-2);
 
         var _this : CenterCircle = this;
 
@@ -30,15 +30,12 @@ class CenterCircle extends StageShape{
 
     }
 
-    public circleHitTest( point : Point ) : Boolean
+    public get radius ( ) : number
     {
-        if( point.distanceToPoint(new Point(this.x, this.x) ) < this._circleRadius )
-        {
-            return true;
-        } else {
-            return false;
-        }
+        return this._radius;
     }
+
+
 
     public onMousePress(evt):void
     {

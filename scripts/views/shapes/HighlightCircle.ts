@@ -1,9 +1,9 @@
 class HighlightCircle  extends StageShape
 {
     private _container : createjs.Container;
+    private _stage          : any;
 
-    private _circleRadius   : number  = 50;
-
+    public _circleRadius   : number  = 50;
 
     constructor( x : number , y : number , stage : any ){
         super(x , y , stage);
@@ -15,7 +15,11 @@ class HighlightCircle  extends StageShape
 
         this.alpha = 0.8;
 
+    }
 
+    public onMousePress(evt):void
+    {
+        console.log("onMousePress");
 
     }
 

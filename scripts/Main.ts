@@ -28,9 +28,9 @@
  */
 class SacretGeometry {
 
-    private container : HTMLElement;
-    private stageView : StageView;
-    private drawView : DrawView;
+    private container   : HTMLElement;
+    private stageView   : StageView;
+    private drawView    : DrawView;
 
     constructor( container : HTMLElement )  {
 
@@ -43,6 +43,5 @@ class SacretGeometry {
         this.drawView       = new DrawView(this.container);
         this.drawView.stage = this.stageView.stage;
         this.drawView.init();
-
     }
 }
