@@ -31,7 +31,6 @@ class StageView extends View
         createjs.Touch.enable( super._stage );
         //}
 
-
         var _this = this;
         window.addEventListener('resize', function() {
             _this.resize();

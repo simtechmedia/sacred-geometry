@@ -1,23 +1,21 @@
 
 class CenterCircle extends StageShape{
 
-    private _circleRadius : number  = 50;
+    private _circleRadius   : number  = 50;
 
-    private _stage : any;
+    private _stage          : any;
 
-    private helpLabel : createjs.Text;
+    private helpLabel       : createjs.Text;
 
-    public removeSignal:Signal = new Signal();
+    public removeSignal     : Signal = new Signal();
 
-    private removing : Boolean = false;
+    private removing        : Boolean = false;
 
     constructor( x : number , y : number , stage : any ){
         super(x , y , stage);
-
         this.graphics.setStrokeStyle(5);
         this.graphics.beginStroke("#000000");
         this.graphics.beginFill("#ffffff").drawCircle(1,1,this._circleRadius-2);
-
 
         var _this : CenterCircle = this;
 
@@ -25,14 +23,24 @@ class CenterCircle extends StageShape{
             _this.onMousePress(evt);
         });
 
-        this.helpLabel = new createjs.Text("Click to begin","bold 18px Arial","#FFF");
+        this.helpLabel = new createjs.Text("Click to begin","bold 18px Arial","#000");
         this.container.addChild(this.helpLabel);
         this.helpLabel.x = this.x + 100;
         this.helpLabel.y = this.y;
 
     }
 
-    onMousePress(evt):void
+    public circleHitTest( point : Point ) : Boolean
+    {
+        if( point.distanceToPoint(new Point(this.x, this.x) ) < this._circleRadius )
+        {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public onMousePress(evt):void
     {
         console.log("onMousePress");
         this.removing = true;
@@ -43,16 +51,27 @@ class CenterCircle extends StageShape{
         }});
     }
 
-    onMouseOver(evt):void
+    public onMouseOver(evt):void
     {
-        if(!this.removing){
-            TweenLite.to(this, 0.5, { scaleX:1.2 , scaleY:1.2, ease:Quad.easeOut});
-            document.body.style.cursor='move';
-        }
 
-        // Remove if need be
-        if(this.container.contains(this.helpLabel))  {
-            this.removeHelp();
+        if(this.currentState == StageShape.STATE_READY || this.currentState == StageShape.STATE_ANIMATING_OUT )
+        {
+
+            this.currentState = StageShape.STATE_ANIMATING_IN;
+
+            if(!this.removing){
+
+                var _this : CenterCircle = this;
+                TweenLite.to(this, 0.5, { scaleX:1.2 , scaleY:1.2, ease:Quad.easeOut ,onComplete:function(){
+                    _this.currentState = StageShape.STATE_EXPANDED;
+                }});
+                document.body.style.cursor='move';
+            }
+
+            // Remove if need be
+            if(this.container.contains(this.helpLabel))  {
+                this.removeHelp();
+            }
         }
     }
 
@@ -66,10 +85,20 @@ class CenterCircle extends StageShape{
 
     onMouseOut(evt):void
     {
-        if(!this.removing){
-            document.body.style.cursor='default';
-            TweenLite.to(this, 0.5, { scaleX:1 , scaleY:1, ease:Quad.easeOut});
+        if(this.currentState == StageShape.STATE_EXPANDED || this.currentState == StageShape.STATE_ANIMATING_IN )
+        {
+            this.currentState = StageShape.STATE_ANIMATING_OUT;
+
+            if(!this.removing){
+                document.body.style.cursor='default';
+
+                var _this : CenterCircle = this;
+                TweenLite.to(this, 0.5, { scaleX:1 , scaleY:1, ease:Quad.easeOut, onComplete:function(){
+                    _this.currentState = StageShape.STATE_READY;
+                }});
+            }
         }
+
 
     }
 }

@@ -4,11 +4,31 @@ class StageShape extends createjs.Shape{
 
     private _currentMousePos : Point;
 
+    public static STATE_READY           : String = "STATE_READY";
+    public static STATE_ANIMATING_IN    : String = "STATE_ANIMATING_IN";
+    public static STATE_ANIMATING_OUT   : String = "STATE_ANIMATING_OUT";
+    public static STATE_EXPANDED        : String = "STATE_EXPANDED";
+
+    private _currentState : String ;
+
     constructor( x : number , y : number , container : any ){
         this._container = container;
         super();
 
+        this.currentState = StageShape.STATE_READY;
+
     }
+
+    public set currentState ( state : String )
+    {
+        this._currentState = state;
+    }
+
+    public get currentState () : String
+    {
+        return this._currentState;
+    }
+
     public set container ( container : createjs.Container )   {
         this._container      = container;
     }

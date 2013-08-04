@@ -216,11 +216,11 @@ var DrawView = (function (_super) {
         this.circlesContainer = new createjs.Container();
         this.stage.addChild(this.circlesContainer);
         this._shapesArray = [];
-        this.fpsLabel = new createjs.Text("-- fps", "bold 18px Arial", "#FFF");
+        this.fpsLabel = new createjs.Text("-- fps", "bold 18px Give You Glory", "#000");
         this.stage.addChild(this.fpsLabel);
         this.fpsLabel.x = 400;
         this.fpsLabel.y = 0;
-        this._debugBox = new createjs.Text("-- debugBox", "bold 18px Arial", "#FFF");
+        this._debugBox = new createjs.Text("-- debugBox", "bold 18px Give You Glory", "#000");
         this.stage.addChild(this._debugBox);
         this._debugBox.x = 10;
         this._debugBox.y = 10;
@@ -231,6 +231,7 @@ var DrawView = (function (_super) {
         createjs.Ticker.addEventListener('tick', function () {
             _this.tick();
         });
+        this._highlightCircle = new HighlightCircle(100, 100, this.circlesContainer);
         this.stage.onMouseMove = function (evt) {
             _this._currentMousePos.x = evt.rawX - window.innerWidth / 2;
             _this._currentMousePos.y = evt.rawY - window.innerHeight / 2;
@@ -239,8 +240,34 @@ var DrawView = (function (_super) {
             if(_this._activeShape) {
                 _this._activeShape.currentMousePos = currentMousePoint;
             }
+            if(centerCircle.circleHitTest(_this._currentMousePos)) {
+                centerCircle.onMouseOver(null);
+            } else {
+                centerCircle.onMouseOut(null);
+            }
+            for(var i = 0; i < _this._shapesArray.length; i++) {
+                var currentShape = _this._shapesArray[i];
+                if(currentShape.circleHitTest(_this._currentMousePos)) {
+                    currentShape.highLight();
+                    var angle = currentShape.getAngleFromCenter(_this._currentMousePos);
+                    _this.circlesContainer.addChild(_this._highlightCircle);
+                    _this._highlightCircle.x = currentShape.x - (currentShape.radius * Math.cos(angle));
+                    _this._highlightCircle.y = currentShape.y - (currentShape.radius * Math.sin(angle));
+                }
+                currentShape.update();
+            }
         };
         var _this = this;
+        this.stage.onClick = function (evt) {
+            console.log("click xMouse: " + _this._currentMousePos.x + "," + _this._currentMousePos.y);
+            if(centerCircle.circleHitTest(_this._currentMousePos)) {
+                centerCircle.onMousePress(null);
+            }
+            for(var i = 0; i < _this._shapesArray.length; i++) {
+                var currentShape = _this._shapesArray[i];
+                currentShape.onMousePress(null);
+            }
+        };
         window.addEventListener('resize', function () {
             _this.resize();
         });
@@ -266,13 +293,6 @@ var DrawView = (function (_super) {
         this.circlesContainer.removeChild(shape);
     };
     DrawView.prototype.tick = function () {
-        for(var i = 0; i < this._shapesArray.length; i++) {
-            var currentShape = this._shapesArray[i];
-            if(currentShape.circleHitTest(this._currentMousePos)) {
-                currentShape.highLight();
-            }
-            currentShape.update();
-        }
         this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
         this.stage.update();
     };
@@ -283,7 +303,22 @@ var StageShape = (function (_super) {
     function StageShape(x, y, container) {
         this._container = container;
         _super.call(this);
+        this.currentState = StageShape.STATE_READY;
     }
+    StageShape.STATE_READY = "STATE_READY";
+    StageShape.STATE_ANIMATING_IN = "STATE_ANIMATING_IN";
+    StageShape.STATE_ANIMATING_OUT = "STATE_ANIMATING_OUT";
+    StageShape.STATE_EXPANDED = "STATE_EXPANDED";
+    Object.defineProperty(StageShape.prototype, "currentState", {
+        get: function () {
+            return this._currentState;
+        },
+        set: function (state) {
+            this._currentState = state;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(StageShape.prototype, "container", {
         get: function () {
             return this._container;
@@ -332,11 +367,18 @@ var CenterCircle = (function (_super) {
         this.addEventListener('mousedown', function (evt) {
             _this.onMousePress(evt);
         });
-        this.helpLabel = new createjs.Text("Click to begin", "bold 18px Arial", "#FFF");
+        this.helpLabel = new createjs.Text("Click to begin", "bold 18px Arial", "#000");
         this.container.addChild(this.helpLabel);
         this.helpLabel.x = this.x + 100;
         this.helpLabel.y = this.y;
     }
+    CenterCircle.prototype.circleHitTest = function (point) {
+        if(point.distanceToPoint(new Point(this.x, this.x)) < this._circleRadius) {
+            return true;
+        } else {
+            return false;
+        }
+    };
     CenterCircle.prototype.onMousePress = function (evt) {
         console.log("onMousePress");
         this.removing = true;
@@ -352,16 +394,23 @@ var CenterCircle = (function (_super) {
         });
     };
     CenterCircle.prototype.onMouseOver = function (evt) {
-        if(!this.removing) {
-            TweenLite.to(this, 0.5, {
-                scaleX: 1.2,
-                scaleY: 1.2,
-                ease: Quad.easeOut
-            });
-            document.body.style.cursor = 'move';
-        }
-        if(this.container.contains(this.helpLabel)) {
-            this.removeHelp();
+        if(this.currentState == StageShape.STATE_READY || this.currentState == StageShape.STATE_ANIMATING_OUT) {
+            this.currentState = StageShape.STATE_ANIMATING_IN;
+            if(!this.removing) {
+                var _this = this;
+                TweenLite.to(this, 0.5, {
+                    scaleX: 1.2,
+                    scaleY: 1.2,
+                    ease: Quad.easeOut,
+                    onComplete: function () {
+                        _this.currentState = StageShape.STATE_EXPANDED;
+                    }
+                });
+                document.body.style.cursor = 'move';
+            }
+            if(this.container.contains(this.helpLabel)) {
+                this.removeHelp();
+            }
         }
     };
     CenterCircle.prototype.removeHelp = function () {
@@ -375,13 +424,20 @@ var CenterCircle = (function (_super) {
         });
     };
     CenterCircle.prototype.onMouseOut = function (evt) {
-        if(!this.removing) {
-            document.body.style.cursor = 'default';
-            TweenLite.to(this, 0.5, {
-                scaleX: 1,
-                scaleY: 1,
-                ease: Quad.easeOut
-            });
+        if(this.currentState == StageShape.STATE_EXPANDED || this.currentState == StageShape.STATE_ANIMATING_IN) {
+            this.currentState = StageShape.STATE_ANIMATING_OUT;
+            if(!this.removing) {
+                document.body.style.cursor = 'default';
+                var _this = this;
+                TweenLite.to(this, 0.5, {
+                    scaleX: 1,
+                    scaleY: 1,
+                    ease: Quad.easeOut,
+                    onComplete: function () {
+                        _this.currentState = StageShape.STATE_READY;
+                    }
+                });
+            }
         }
     };
     return CenterCircle;
@@ -402,6 +458,8 @@ var CircleShape = (function (_super) {
             _this.onMousePress(evt);
         });
     }
+    CircleShape.STATE_ACTIVE = "STATE_ACTIVE";
+    CircleShape.STATE_INAACTIVE = "STATE_INACTIVE";
     Object.defineProperty(CircleShape.prototype, "currentMousePos", {
         set: function (point) {
             _super.prototype.currentMousePos = point;
@@ -427,6 +485,22 @@ var CircleShape = (function (_super) {
             return false;
         }
     };
+    CircleShape.prototype.getAngleFromCenter = function (point) {
+        var reletiveX = point.x - this.x;
+        var reletiveY = point.y - this.y;
+        var theta = Math.atan2(-reletiveY, -reletiveX);
+        if(theta < 0) {
+            theta += 2 * Math.PI;
+        }
+        return theta;
+    };
+    Object.defineProperty(CircleShape.prototype, "radius", {
+        get: function () {
+            return this._radius;
+        },
+        enumerable: true,
+        configurable: true
+    });
     CircleShape.prototype.onMouseOver = function (evt) {
         console.log("this on over");
         console.log(this);
@@ -436,6 +510,19 @@ var CircleShape = (function (_super) {
         this.onMouseClickedSignal.dispatch(null);
     };
     return CircleShape;
+})(StageShape);
+var HighlightCircle = (function (_super) {
+    __extends(HighlightCircle, _super);
+    function HighlightCircle(x, y, stage) {
+        _super.call(this, x, y, stage);
+        this._circleRadius = 50;
+        this.graphics.setStrokeStyle(5);
+        this.graphics.beginStroke("#000000");
+        this.graphics.beginFill("#ffffff").drawCircle(1, 1, this._circleRadius - 2);
+        var _this = this;
+        this.alpha = 0.8;
+    }
+    return HighlightCircle;
 })(StageShape);
 var Point = (function () {
     function Point(_x, _y) {

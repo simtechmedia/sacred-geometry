@@ -7,9 +7,11 @@ class CircleShape extends StageShape
     public onMouseClickedSignal : Signal = new Signal();
 
     private _strokeWidth    : number;
-    private _highlightWidth : number;
 
     private _displayVO       : DisplayVO;
+
+    public static STATE_ACTIVE      : String = "STATE_ACTIVE";           // state for when the circle is getting resized
+    public static STATE_INAACTIVE   : String = "STATE_INACTIVE";      // when nothing's goign on
 
     constructor( x : number , y : number , container : createjs.Container, displayVO : DisplayVO ){
         super(x,y,container);
@@ -30,6 +32,9 @@ class CircleShape extends StageShape
         });
     }
 
+    /*
+    Find out distance from here to center
+     */
     public set currentMousePos ( point : Point )
     {
         super.currentMousePos   = point;
@@ -64,6 +69,29 @@ class CircleShape extends StageShape
             return false;
         }
     }
+
+    public getAngleFromCenter ( point : Point ) : number
+    {
+        var reletiveX : number = point.x - this.x;
+        var reletiveY : number = point.y - this.y;
+
+        var theta : number = Math.atan2(-reletiveY , -reletiveX);
+
+        if(theta < 0) {
+            theta += 2*Math.PI;
+        }
+
+        //var angle : number = theta * 180 / Math.PI ;
+
+        return theta;
+    }
+
+    public get radius () : number
+    {
+        return this._radius;
+    }
+
+
 
     onMouseOver(evt):void
     {
