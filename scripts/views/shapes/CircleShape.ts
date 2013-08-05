@@ -80,8 +80,6 @@ class CircleShape extends StageShape
         // Turns our you use radians and not angles, doh
         //var angle : number = theta * 180 / Math.PI ;
 
-        console.log( theta);
-
         return theta;
     }
 

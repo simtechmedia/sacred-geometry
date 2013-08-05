@@ -3,8 +3,6 @@ class CenterCircle extends StageShape{
 
     private _radius     : number  = 50;
 
-    private _stage          : any;
-
     private helpLabel       : createjs.Text;
 
     public removeSignal     : Signal = new Signal();
