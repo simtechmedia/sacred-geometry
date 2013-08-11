@@ -88,6 +88,11 @@ class CircleShape extends StageShape
         return this._radius;
     }
 
+    public set radius( rad : number )
+    {
+        this._radius = rad;
+    }
+
     onMouseOver(evt):void
     {
         console.log("this on over");
