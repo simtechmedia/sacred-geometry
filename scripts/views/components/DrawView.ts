@@ -14,12 +14,11 @@ class DrawView extends View
 
     private _highlightCircle    : HighlightCircle ;         // Circle use for pin pointing
 
-    private _hintCircleAr       : HintCircle[];
-    private hintCircleClone      : createjs.Shape;
+    private _hintCircleAr       : createjs.Shape[];         // Hint Circle Array
 
     // to be moved to model
 
-    private _circleSplit         : number = 4;
+    private _hintNumber         : number = 4;               // Number of circle hinting
 
     private _centerCircle        : CenterCircle; // Init Center Circle
 
@@ -57,14 +56,7 @@ class DrawView extends View
 
         this._highlightCircle       = new HighlightCircle(100,100 , this.circlesContainer);
 
-        // Creates First Hint Circle
-        var hintCircle : HintCircle = new HintCircle(0,0 , this.circlesContainer);
-        hintCircle.cache(-55,-55,110,110);
 
-        this.hintCircleClone        = hintCircle.clone();
-        this.hintCircleClone.regX   = 55;
-        this.hintCircleClone.regY   = 55;
-        // this.circlesContainer.addChild(hintCircleClone);
 
         // Listeniners
         // start the tick and point it at the window so we can do some work before updating the stage:
@@ -86,12 +78,27 @@ class DrawView extends View
             _this.resize();
         });
         this.resize();
+
+        // Creates Highlight circles
         this.createCircleClones();
     }
 
     private createCircleClones(): void
     {
+        console.log("Creating clones " + this._hintNumber )
 
+        this._hintCircleAr = [];
+
+        // Creates First Hint Circle
+        var hintRadius : number     = 50;
+        var hintCircle : HintCircle = new HintCircle( 0 , 0 , hintRadius,  this.circlesContainer );
+        hintCircle.cache( -hintRadius*1.1 , -hintRadius*1.1 , hintRadius*2*1.1 , hintRadius*2*1.1 );
+
+        for( var i : number = 0 ; i < this._hintNumber ; i++ )
+        {
+            console.log("Created clone");
+            this._hintCircleAr[i] = hintCircle.hintClone;
+        }
 
     }
 
@@ -140,10 +147,18 @@ class DrawView extends View
 
                 var angleAsDegrees : number = angle * (180/Math.PI);
 
+                for( var i : number = 0 ; i < this._hintNumber ; i++ )
+                {
+                   var hintShape : createjs.Shape = this._hintCircleAr[i];
+                   var position : number = ( angleAsDegrees - ( ( 360 / ( this._hintNumber + 1 ) ) * ( i + 1 ) ) ) * ( Math.PI/180 ) ;
+                   hintShape.x = currentShape.x - ( currentShape.radius * Math.cos( position ) ) ;
+                   hintShape.y = currentShape.y - ( currentShape.radius * Math.sin( position ) );
+                   //hintShape.y = currentShape.y - ( currentShape.radius * Math.sin( ( angleAsDegrees - 180 ) * ( Math.PI/180 )) );
+                   this.circlesContainer.addChild(hintShape);
+                }
+
                 // Place circle /
-                this.hintCircleClone.x = currentShape.x - ( currentShape.radius * Math.cos( ( angleAsDegrees - 180 ) * ( Math.PI/180 )) );
-                this.hintCircleClone.y = currentShape.y - ( currentShape.radius * Math.sin( ( angleAsDegrees - 180 ) * ( Math.PI/180 )) );
-                this.circlesContainer.addChild(this.hintCircleClone);
+
 
             }
             // Reupdating all the circles for now

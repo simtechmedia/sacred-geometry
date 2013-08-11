@@ -209,7 +209,7 @@ var DrawView = (function (_super) {
     __extends(DrawView, _super);
     function DrawView(container) {
         _super.call(this, container);
-        this._circleSplit = 4;
+        this._hintNumber = 4;
     }
     DrawView.prototype.init = function () {
         console.log("Drawview Init");
@@ -229,11 +229,6 @@ var DrawView = (function (_super) {
         this._centerCircle.removeSignal.addOnce(this.removeObject, this, 0);
         this.circlesContainer.addChild(this._centerCircle);
         this._highlightCircle = new HighlightCircle(100, 100, this.circlesContainer);
-        var hintCircle = new HintCircle(0, 0, this.circlesContainer);
-        hintCircle.cache(-55, -55, 110, 110);
-        this.hintCircleClone = hintCircle.clone();
-        this.hintCircleClone.regX = 55;
-        this.hintCircleClone.regY = 55;
         var _this = this;
         createjs.Ticker.addEventListener('tick', function () {
             _this.tick();
@@ -251,6 +246,15 @@ var DrawView = (function (_super) {
         this.createCircleClones();
     };
     DrawView.prototype.createCircleClones = function () {
+        console.log("Creating clones " + this._hintNumber);
+        this._hintCircleAr = [];
+        var hintRadius = 50;
+        var hintCircle = new HintCircle(0, 0, hintRadius, this.circlesContainer);
+        hintCircle.cache(-hintRadius * 1.1, -hintRadius * 1.1, hintRadius * 2 * 1.1, hintRadius * 2 * 1.1);
+        for(var i = 0; i < this._hintNumber; i++) {
+            console.log("Created clone");
+            this._hintCircleAr[i] = hintCircle.hintClone;
+        }
     };
     DrawView.prototype.onMouseMove = function (evt) {
         this._currentMousePos.x = evt.rawX - window.innerWidth / 2;
@@ -277,9 +281,13 @@ var DrawView = (function (_super) {
                 this._highlightCircle.y = currentShape.y - (currentShape.radius * Math.sin(angle));
                 highlighted = true;
                 var angleAsDegrees = angle * (180 / Math.PI);
-                this.hintCircleClone.x = currentShape.x - (currentShape.radius * Math.cos((angleAsDegrees - 180) * (Math.PI / 180)));
-                this.hintCircleClone.y = currentShape.y - (currentShape.radius * Math.sin((angleAsDegrees - 180) * (Math.PI / 180)));
-                this.circlesContainer.addChild(this.hintCircleClone);
+                for(var i = 0; i < this._hintNumber; i++) {
+                    var hintShape = this._hintCircleAr[i];
+                    var position = (angleAsDegrees - ((360 / (this._hintNumber + 1)) * (i + 1))) * (Math.PI / 180);
+                    hintShape.x = currentShape.x - (currentShape.radius * Math.cos(position));
+                    hintShape.y = currentShape.y - (currentShape.radius * Math.sin(position));
+                    this.circlesContainer.addChild(hintShape);
+                }
             }
         }
         if(!highlighted) {
@@ -289,7 +297,6 @@ var DrawView = (function (_super) {
         }
     };
     DrawView.prototype.onStageClick = function (event) {
-        console.log("click xMouse: " + this._currentMousePos.x + "," + this._currentMousePos.y);
         if(this._centerCircle.circleHitTest(this._currentMousePos, this._centerCircle.radius, 50)) {
             this._centerCircle.onMousePress(null);
         }
@@ -481,9 +488,9 @@ var CenterCircle = (function (_super) {
 })(StageShape);
 var HintCircle = (function (_super) {
     __extends(HintCircle, _super);
-    function HintCircle(x, y, stage) {
+    function HintCircle(x, y, radius, stage) {
         _super.call(this, x, y, stage);
-        this._circleRadius = 50;
+        this._circleRadius = radius;
         var x, y;
         for(var ang = 0; ang <= 360; ang += 5) {
             var rad = ang * (Math.PI / 180);
@@ -492,9 +499,16 @@ var HintCircle = (function (_super) {
             this.graphics.beginFill("#000000").drawCircle(x, y, 2);
         }
     }
-    HintCircle.prototype.onMousePress = function (evt) {
-        console.log("onMousePress");
-    };
+    Object.defineProperty(HintCircle.prototype, "hintClone", {
+        get: function () {
+            var shape = this.clone();
+            shape.regX = this._circleRadius * 1.1;
+            shape.regY = this._circleRadius * 1.1;
+            return shape;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return HintCircle;
 })(StageShape);
 var CircleShape = (function (_super) {

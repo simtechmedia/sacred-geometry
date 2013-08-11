@@ -34,7 +34,6 @@ class SacretGeometry {
     private drawView    : DrawView;
 
     constructor( container : HTMLElement )  {
-
         this.container = container ;
 
         // Stage Views handles keyboard listeners and resizes etc
@@ -43,6 +42,6 @@ class SacretGeometry {
 
         this.drawView       = new DrawView(this.container);
         this.drawView.stage = this.stageView.stage;
-        this.drawView.init();
+        this.drawView.init(); 
     }
 }
