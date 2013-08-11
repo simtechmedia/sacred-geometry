@@ -3429,7 +3429,7 @@
 				}
 
 				if (!clip) {
-					var mult = (_ieVers < 8) ? 1 : -1, //in Internet Explorer 7 and before, the box model is broken, causing the browser to treat the width/height of the actual rotated filtered image as the width/height of the box itself, but Microsoft corrected that in IE8. We must use a negative offset in IE8 on the right/bottom
+					var mult = (_ieVers < 8) ? 1 : -1, //in Internet Explorer 7 and before, the box models is broken, causing the browser to treat the width/height of the actual rotated filtered image as the width/height of the box itself, but Microsoft corrected that in IE8. We must use a negative offset in IE8 on the right/bottom
 						marg, prop, dif;
 					dx = t.ieOffsetX || 0;
 					dy = t.ieOffsetY || 0;

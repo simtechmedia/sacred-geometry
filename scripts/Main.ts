@@ -19,6 +19,8 @@
 ///<reference path="views/vo/Point.ts" />
 ///<reference path="views/vo/DisplayVO.ts" />
 
+///<reference path="models/StateModel.ts" />
+
 
 /**
  * Created with JetBrains PhpStorm.
@@ -32,16 +34,24 @@ class SacretGeometry {
     private container   : HTMLElement;
     private stageView   : StageView;
     private drawView    : DrawView;
+    private stateModel  : StateModel;
 
     constructor( container : HTMLElement )  {
-        this.container = container ;
+
+        this.container      = container ;
+
+        this.stateModel     = new StateModel();
+        this.stateModel.init();
 
         // Stage Views handles keyboard listeners and resizes etc
-        this.stageView       = new StageView(this.container);
+        this.stageView      = new StageView(this.container);
         this.stageView.init();
 
+        // Draw View
         this.drawView       = new DrawView(this.container);
+        this.drawView.stateModel = this.stateModel;
         this.drawView.stage = this.stageView.stage;
-        this.drawView.init(); 
+        this.drawView.init();
+
     }
 }

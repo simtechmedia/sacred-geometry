@@ -7,21 +7,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="05360d34-0e63-49b2-869c-240afb30380a" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/vendor/plugins/CSSPlugin.js" afterPath="$PROJECT_DIR$/js/vendor/plugins/CSSPlugin.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/views/components/DrawView.ts" afterPath="$PROJECT_DIR$/scripts/views/components/DrawView.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/views/shapes/HintCircle.ts" afterPath="$PROJECT_DIR$/scripts/views/shapes/HintCircle.ts" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Main.js.map" afterPath="$PROJECT_DIR$/scripts/Main.js.map" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Main.js" afterPath="$PROJECT_DIR$/scripts/Main.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Main.ts" afterPath="$PROJECT_DIR$/scripts/Main.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/vendor/TweenMax.js" afterPath="$PROJECT_DIR$/js/vendor/TweenMax.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="sacred-geometry.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Dummy.txt" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1376179146684" ignored="false" />
     <file path="/index.html" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1373185364943" ignored="false" />
-    <file path="/Main.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1375709749414" ignored="false" />
+    <file path="/Main.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1376185942026" ignored="false" />
     <file path="/StageView.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1373461962857" ignored="false" />
     <file path="/DrawView.js" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1373193759957" ignored="false" />
-    <file path="/DrawView.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1376183072732" ignored="false" />
+    <file path="/DrawView.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1376203758505" ignored="false" />
     <file path="/View.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1373199770702" ignored="false" />
     <file path="$PROJECT_DIR$/../../../htdocs/EaselParticles/ts/views/ParticleView.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1373199374025" ignored="false" />
     <file path="/CenterCircle.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1375579089432" ignored="false" />
@@ -33,6 +34,7 @@
     <file path="/DisplayVO.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1374067250286" ignored="false" />
     <file path="/HighlightCircle.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1375578623464" ignored="false" />
     <file path="/HintCircle.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1376180659145" ignored="false" />
+    <file path="/StateModel.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1376199356642" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +57,7 @@
       <file leaf-file-name="DrawView.ts" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/views/components/DrawView.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="152" column="96" selection-start="5940" selection-end="5940" vertical-scroll-proportion="0.0">
+            <state line="163" column="21" selection-start="6605" selection-end="6605" vertical-scroll-proportion="-27.16">
               <folding />
             </state>
           </provider>
@@ -79,10 +81,19 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="StateModel.ts" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/models/StateModel.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="21" column="45" selection-start="465" selection-end="465" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="Main.ts" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/Main.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="44" column="30" selection-start="1575" selection-end="1575" vertical-scroll-proportion="0.5879237">
+            <state line="56" column="1" selection-start="1826" selection-end="1826" vertical-scroll-proportion="0.8230683">
               <folding />
             </state>
           </provider>
@@ -133,7 +144,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/scripts/views/CenterCircle.ts" />
         <option value="$PROJECT_DIR$/scripts/views/DrawView.ts" />
         <option value="localhost/sacred-geometry/scripts/Main.js" />
         <option value="$PROJECT_DIR$/scripts/views/vo/Point.ts" />
@@ -147,6 +157,7 @@
         <option value="$PROJECT_DIR$/scripts/views/shapes/CenterCircle.ts" />
         <option value="$PROJECT_DIR$/scripts/views/shapes/CircleShape.ts" />
         <option value="$PROJECT_DIR$/scripts/views/shapes/HintCircle.ts" />
+        <option value="$PROJECT_DIR$/scripts/models/StateModel.ts" />
         <option value="$PROJECT_DIR$/scripts/views/components/DrawView.ts" />
         <option value="$PROJECT_DIR$/scripts/Main.ts" />
       </list>
@@ -238,10 +249,6 @@
               <option name="myItemId" value="views" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vo" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -310,24 +317,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="signals" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sacred-geometry" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sacred-geometry" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scripts" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="libs" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -420,18 +409,18 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32921812" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2590062" sideWeight="0.6728395" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2590062" sideWeight="0.57304525" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2590062" sideWeight="0.42592594" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271605" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298969" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -500,11 +489,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="http://localhost/sacred-geometry/scripts/Main.js">
-      <provider selected="true" editor-type-id="httpFileEditor">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/libs/jqueryui.d.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state line="29" column="26" selection-start="703" selection-end="703" vertical-scroll-proportion="0.0">
@@ -547,23 +531,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/views/shapes/CircleShape.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="34" selection-start="2583" selection-end="2583" vertical-scroll-proportion="0.55508476">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/libs/easeljs.d.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state line="523" column="20" selection-start="20804" selection-end="20804" vertical-scroll-proportion="-11.48">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/views/shapes/StageShape.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="39" selection-start="34" selection-end="39" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -582,9 +552,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/views/shapes/HintCircle.ts">
+    <entry file="file://$PROJECT_DIR$/scripts/views/shapes/CircleShape.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="20" selection-start="787" selection-end="787" vertical-scroll-proportion="0.0">
+        <state line="98" column="33" selection-start="2867" selection-end="2879" vertical-scroll-proportion="0.8411017">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/views/shapes/StageShape.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="39" selection-start="34" selection-end="39" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -596,16 +573,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/models/StateModel.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="45" selection-start="465" selection-end="465" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/views/shapes/HintCircle.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="20" selection-start="787" selection-end="787" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/views/components/DrawView.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="152" column="96" selection-start="5940" selection-end="5940" vertical-scroll-proportion="0.0">
+        <state line="163" column="21" selection-start="6605" selection-end="6605" vertical-scroll-proportion="-27.16">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/Main.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="30" selection-start="1575" selection-end="1575" vertical-scroll-proportion="0.5879237">
+        <state line="56" column="1" selection-start="1826" selection-end="1826" vertical-scroll-proportion="0.8230683">
           <folding />
         </state>
       </provider>
