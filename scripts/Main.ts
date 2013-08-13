@@ -27,7 +27,7 @@
  * User: sim
  * Date: 7/07/
  * Time: 6:10 PM
- * To change this template use File | Settings | File Templates.
+ * To change this template use File | Settings | File Templates        .
  */
 class SacretGeometry {
 
@@ -45,6 +45,7 @@ class SacretGeometry {
 
         // Stage Views handles keyboard listeners and resizes etc
         this.stageView      = new StageView(this.container);
+        this.stageView.stateModel = this.stateModel;
         this.stageView.init();
 
         // Draw View

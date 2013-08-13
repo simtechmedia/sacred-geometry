@@ -192,8 +192,33 @@ var StageView = (function (_super) {
         window.addEventListener('resize', function () {
             _this.resize();
         });
+        document.onkeydown = function (evt) {
+            _this.handleKeyDown(evt);
+        };
         this.resize();
     };
+    StageView.prototype.handleKeyDown = function (evt) {
+        if(!evt) {
+            var evt = window.event;
+        }
+        console.log("key handle down " + this._stateModel);
+        switch(evt.keyCode) {
+            case 37:
+                this._stateModel.spawnAmountSubtract();
+                break;
+            case 39:
+                this._stateModel.spawnAmountAdd();
+                break;
+        }
+    };
+    Object.defineProperty(StageView.prototype, "stateModel", {
+        set: function (model) {
+            console.log("Set statemdoel in stageView ");
+            this._stateModel = model;
+        },
+        enumerable: true,
+        configurable: true
+    });
     StageView.prototype.resize = function () {
         console.log("resize");
         this.canvas.width = window.innerWidth;
@@ -209,7 +234,6 @@ var DrawView = (function (_super) {
     __extends(DrawView, _super);
     function DrawView(container) {
         _super.call(this, container);
-        this._hintNumber = 4;
     }
     DrawView.prototype.init = function () {
         console.log("Drawview Init");
@@ -246,12 +270,21 @@ var DrawView = (function (_super) {
         this.createCircleClones();
     };
     DrawView.prototype.createCircleClones = function () {
-        console.log("Creating clones " + this._hintNumber);
+        console.log("Creating clones " + this._stateModel.spawnAmount);
+        if(this._hintCircleAr != null) {
+            for(var j = this._hintCircleAr.length + 1; j > 0; j--) {
+                var hintShape = this._hintCircleAr[j];
+                if(this.circlesContainer.contains(hintShape)) {
+                    this.circlesContainer.removeChild(hintShape);
+                }
+                hintShape = null;
+            }
+        }
         this._hintCircleAr = [];
         var hintRadius = 50;
         var hintCircle = new HintCircle(0, 0, hintRadius, this.circlesContainer);
         hintCircle.cache(-hintRadius * 1.1, -hintRadius * 1.1, hintRadius * 2 * 1.1, hintRadius * 2 * 1.1);
-        for(var i = 0; i < this._hintNumber; i++) {
+        for(var i = 0; i < this._stateModel.spawnAmount; i++) {
             console.log("Created clone");
             this._hintCircleAr[i] = hintCircle.hintClone;
         }
@@ -273,10 +306,12 @@ var DrawView = (function (_super) {
                 if(this._activeCircleShape) {
                     this._activeCircleShape.currentMousePos = currentMousePoint;
                     this._activeCircleShape.update();
-                    for(var k = 0; k < this._activeCircleGroup.length; k++) {
-                        var hintedCircle = this._activeCircleGroup[k];
-                        hintedCircle.radius = this._activeCircleShape.radius;
-                        hintedCircle.update();
+                    if(this._activeCircleGroup != undefined) {
+                        for(var k = 0; k < this._activeCircleGroup.length; k++) {
+                            var hintedCircle = this._activeCircleGroup[k];
+                            hintedCircle.radius = this._activeCircleShape.radius;
+                            hintedCircle.update();
+                        }
                     }
                 }
                 break;
@@ -292,9 +327,9 @@ var DrawView = (function (_super) {
                         this._highlightCircle.y = currentShape.y - (currentShape.radius * Math.sin(angle));
                         highlighted = true;
                         var angleAsDegrees = angle * (180 / Math.PI);
-                        for(var j = 0; j < this._hintNumber; j++) {
+                        for(var j = 0; j < this._stateModel.spawnAmount; j++) {
                             var hintShape = this._hintCircleAr[j];
-                            var position = (angleAsDegrees - ((360 / (this._hintNumber + 1)) * (j + 1))) * (Math.PI / 180);
+                            var position = (angleAsDegrees - ((360 / (this._stateModel.spawnAmount + 1)) * (j + 1))) * (Math.PI / 180);
                             hintShape.x = currentShape.x - (currentShape.radius * Math.cos(position));
                             hintShape.y = currentShape.y - (currentShape.radius * Math.sin(position));
                             this.circlesContainer.addChild(hintShape);
@@ -304,6 +339,13 @@ var DrawView = (function (_super) {
                 if(!highlighted) {
                     if(this.circlesContainer.contains(this._highlightCircle)) {
                         this.circlesContainer.removeChild(this._highlightCircle);
+                        console.log("this._stateModel.spawnAmount = " + this._stateModel.spawnAmount);
+                        for(var j = 0; j < this._stateModel.spawnAmount; j++) {
+                            var hintShape = this._hintCircleAr[j];
+                            if(this.circlesContainer.contains(hintShape)) {
+                                this.circlesContainer.removeChild(hintShape);
+                            }
+                        }
                     }
                 }
                 break;
@@ -343,7 +385,7 @@ var DrawView = (function (_super) {
     DrawView.prototype.addCircle = function (x, y, active) {
         if (typeof active === "undefined") { active = false; }
         this._stateModel.currentState = StateModel.STATE_RESIZING;
-        var circleShape = new CircleShape(x, y, this.stage, StageShape.createDisplayVO());
+        var circleShape = new CircleShape(x, y, this.stage, StageShape.createDisplayVO(5, 5, '#' + Math.floor(Math.random() * 16777215).toString(16)));
         this.circlesContainer.addChild(circleShape);
         if(active) {
             this._activeCircleShape = circleShape;
@@ -363,10 +405,14 @@ var DrawView = (function (_super) {
         set: function (model) {
             this._stateModel = model;
             this._stateModel.stateChagneSignal.add(this.stateChanged, this, 0);
+            this._stateModel.modelUpdated.add(this.modelUpdated, this, 0);
         },
         enumerable: true,
         configurable: true
     });
+    DrawView.prototype.modelUpdated = function () {
+        this.createCircleClones();
+    };
     DrawView.prototype.stateChanged = function () {
         console.log("StateChanged to " + this._stateModel.currentState);
     };
@@ -582,7 +628,7 @@ var CircleShape = (function (_super) {
     CircleShape.prototype.update = function () {
         this.graphics.clear();
         this.graphics.setStrokeStyle(this._strokeWidth);
-        this.graphics.beginStroke("#000000");
+        this.graphics.beginStroke(this._displayVO.strokeColour);
         this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(0, 0, this._radius);
         this._strokeWidth = this._displayVO.strokeWidth;
     };
@@ -657,12 +703,14 @@ var DisplayVO = (function () {
 var StateModel = (function () {
     function StateModel() {
         this.stateChagneSignal = new Signal();
+        this.modelUpdated = new Signal();
     }
     StateModel.STATE_START = "STATE_START";
     StateModel.STATE_CREATE = "STATE_CREATE";
     StateModel.STATE_RESIZING = "STATE_RESIZING";
     StateModel.prototype.init = function () {
         this._currentState = StateModel.STATE_START;
+        this._spawnAmount = 5;
     };
     Object.defineProperty(StateModel.prototype, "currentState", {
         get: function () {
@@ -675,6 +723,25 @@ var StateModel = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(StateModel.prototype, "spawnAmount", {
+        get: function () {
+            return this._spawnAmount;
+        },
+        set: function (num) {
+            this._spawnAmount = num;
+            this.modelUpdated.dispatch(null);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    StateModel.prototype.spawnAmountAdd = function () {
+        this.spawnAmount = this.spawnAmount + 1;
+    };
+    StateModel.prototype.spawnAmountSubtract = function () {
+        if(this._spawnAmount >= 1) {
+            this.spawnAmount = this.spawnAmount - 1;
+        }
+    };
     return StateModel;
 })();
 var SacretGeometry = (function () {
@@ -683,6 +750,7 @@ var SacretGeometry = (function () {
         this.stateModel = new StateModel();
         this.stateModel.init();
         this.stageView = new StageView(this.container);
+        this.stageView.stateModel = this.stateModel;
         this.stageView.init();
         this.drawView = new DrawView(this.container);
         this.drawView.stateModel = this.stateModel;

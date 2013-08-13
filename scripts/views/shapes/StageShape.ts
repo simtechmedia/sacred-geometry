@@ -65,7 +65,7 @@ class StageShape extends createjs.Shape{
 
     // Helper Functio to return a VO for it's display
     // Might take this out later
-    public static createDisplayVO( strokeWidth:number = 5, hightlightStrokeWidth : number = 10, strokecolour = "#000000") : DisplayVO
+    public static createDisplayVO( strokeWidth:number = 5, hightlightStrokeWidth : number = 10, strokecolour : string  = "#000000") : DisplayVO
     {
         var displayVO : DisplayVO = new DisplayVO();
 

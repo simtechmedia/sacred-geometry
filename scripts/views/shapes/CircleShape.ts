@@ -30,6 +30,8 @@ class CircleShape extends StageShape
         this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(1,1,1);
         this.updating           = true;
 
+
+
         // Inits Stroke Width
         this._strokeWidth       = this._displayVO.strokeWidth;
 
@@ -41,6 +43,7 @@ class CircleShape extends StageShape
         // Initilises as active ( starts resizing soon as it puts on stage , might change thi late )
         this.currentState = CircleShape.STATE_ACTIVE;
     }
+
 
     /*
     Find out distance from here to center
@@ -55,8 +58,9 @@ class CircleShape extends StageShape
     {
         this.graphics.clear();
         this.graphics.setStrokeStyle(this._strokeWidth);
-        this.graphics.beginStroke("#000000");
+        this.graphics.beginStroke(this._displayVO.strokeColour);
         this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(0,0,this._radius);
+
 
         // Resets
         this._strokeWidth = this._displayVO.strokeWidth;

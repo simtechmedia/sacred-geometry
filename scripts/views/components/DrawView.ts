@@ -19,7 +19,7 @@ class DrawView extends View
 
     // to be moved to models
 
-    private _hintNumber         : number = 4;               // Number of circle hinting
+    //private _hintNumber         : number = 4;               // Number of circle hinting
 
     private _centerCircle        : CenterCircle;             // Init Center Circle
 
@@ -52,6 +52,10 @@ class DrawView extends View
         this.stage.addChild(this._debugBox);
         this._debugBox.x            = 10;
         this._debugBox.y            = 10;
+
+
+        var centerCircleArray : Array = [];
+        
 
         this._centerCircle          = new CenterCircle(0 , 0, this.circlesContainer);
         this._centerCircle.removeSignal.addOnce(this.removeCenterCircle, this, 0);
@@ -86,7 +90,18 @@ class DrawView extends View
 
     private createCircleClones(): void
     {
-        console.log("Creating clones " + this._hintNumber )
+        console.log("Creating clones " + this._stateModel.spawnAmount )
+
+        // Clear Old Ones if any
+        if( this._hintCircleAr != null)
+        {
+            for ( var j : number = this._hintCircleAr.length+1 ; j > 0 ; j-- )
+            {
+                var hintShape : createjs.Shape = this._hintCircleAr[j];
+                if( this.circlesContainer.contains(hintShape) ) this.circlesContainer.removeChild(hintShape);
+                hintShape = null;
+            }
+        }
 
         this._hintCircleAr = [];
 
@@ -95,7 +110,7 @@ class DrawView extends View
         var hintCircle : HintCircle = new HintCircle( 0 , 0 , hintRadius,  this.circlesContainer );
         hintCircle.cache( -hintRadius*1.1 , -hintRadius*1.1 , hintRadius*2*1.1 , hintRadius*2*1.1 );
 
-        for( var i : number = 0 ; i < this._hintNumber ; i++ )
+        for( var i : number = 0 ; i < this._stateModel.spawnAmount ; i++ )
         {
             console.log("Created clone");
             this._hintCircleAr[i] = hintCircle.hintClone;
@@ -130,18 +145,20 @@ class DrawView extends View
                     this._activeCircleShape.currentMousePos = currentMousePoint;
                     this._activeCircleShape.update();
 
-
-                    for ( var k : number = 0 ; k  < this._activeCircleGroup.length ; k++ )
+                    // First Center Circle Won't have active grouop
+                    if ( this._activeCircleGroup != undefined )
                     {
-                        var hintedCircle : CircleShape = this._activeCircleGroup[k];
-                        hintedCircle.radius = this._activeCircleShape.radius;
-                        hintedCircle.update();
+                        for ( var k : number = 0 ; k  < this._activeCircleGroup.length ; k++ )
+                        {
+                            var hintedCircle : CircleShape = this._activeCircleGroup[k];
+                            hintedCircle.radius = this._activeCircleShape.radius;
+                            hintedCircle.update();
+                        }
                     }
                 }
                 break;
 
             case StateModel.STATE_CREATE:
-
                 var highlighted : bool = false;        // To Find Out if any shape is being rolled over
                 for ( var i : number = 0 ; i < this._shapesArray.length ; i ++ ) {
                     var currentShape : CircleShape =  this._shapesArray[i];
@@ -161,10 +178,10 @@ class DrawView extends View
                         var angleAsDegrees : number = angle * (180/Math.PI);
 
                         // Creates Hinting Circle(s)
-                        for( var j : number = 0 ; j < this._hintNumber ; j++ )
+                        for( var j : number = 0 ; j < this._stateModel.spawnAmount ; j++ )
                         {
                             var hintShape : createjs.Shape = this._hintCircleAr[j];
-                            var position : number = ( angleAsDegrees - ( ( 360 / ( this._hintNumber + 1 ) ) * ( j + 1 ) ) ) * ( Math.PI/180 ) ;
+                            var position : number = ( angleAsDegrees - ( ( 360 / ( this._stateModel.spawnAmount + 1 ) ) * ( j + 1 ) ) ) * ( Math.PI/180 ) ;
                             hintShape.x = currentShape.x - ( currentShape.radius * Math.cos( position ) ) ;
                             hintShape.y = currentShape.y - ( currentShape.radius * Math.sin( position ) );
                             this.circlesContainer.addChild(hintShape);
@@ -175,78 +192,20 @@ class DrawView extends View
                 if(!highlighted)
                 {
                     // Get ride of circles highlight if not needed
-                    if(this.circlesContainer.contains(this._highlightCircle)) this.circlesContainer.removeChild(this._highlightCircle);
-                }
+                    if(this.circlesContainer.contains(this._highlightCircle))
+                    {
+                        this.circlesContainer.removeChild(this._highlightCircle);
+                        // Clear the hints
 
+                        console.log("this._stateModel.spawnAmount = " + this._stateModel.spawnAmount);
+                        for( var j : number = 0 ; j < this._stateModel.spawnAmount ; j++ ) {
+                            var hintShape : createjs.Shape = this._hintCircleAr[j];
+                            if(this.circlesContainer.contains(hintShape))this.circlesContainer.removeChild(hintShape);
+                        }
+                    }
+                }
                 break;
-
-
         }
-
-
-        /*
-        // Active means it's resizing / being selected
-        if( this._activeCircleShape ) {
-            // This changes the radius of the circle ( adjusting it's size ) ;
-            this._activeCircleShape.currentMousePos = currentMousePoint;
-            this._activeCircleShape.update();
-        }
-
-        // Check for Center Shape
-        // Eventually will loop through circles array
-        if ( this._centerCircle.circleHitTest(this._currentMousePos , this._centerCircle.radius , 50 ) ){
-            this._centerCircle.onMouseOver(null);
-        } else {
-            this._centerCircle.onMouseOut(null);
-        }
-
-
-        //for ( var shape : CircleShape  in this._shapesArray)
-        var highlighted : bool = false;        // To Find Out if any shape is being rolled over
-        for ( var i : number = 0 ; i < this._shapesArray.length ; i ++ ) {
-            var currentShape : CircleShape =  this._shapesArray[i];
-            if (  currentShape.circleHitTest( this._currentMousePos , currentShape.radius, 10 ) ) {
-
-                // Highlights Active Circle
-                currentShape.highLight();
-
-                // Get Angle reletive to center circle ( snap effect );
-                var angle : number      = currentShape.getAngleFromCenter( this._currentMousePos );
-                // move temp circle to the angle of current circle
-                this.circlesContainer.addChild(this._highlightCircle);
-                this._highlightCircle.x = currentShape.x - ( currentShape.radius * Math.cos( angle ) );
-                this._highlightCircle.y = currentShape.y - ( currentShape.radius * Math.sin( angle ) );
-                highlighted = true;
-                // Change Mouse Icon To Circle
-
-                var angleAsDegrees : number = angle * (180/Math.PI);
-
-                // Creates Hinting Circle
-                for( var i : number = 0 ; i < this._hintNumber ; i++ )
-                {
-                   var hintShape : createjs.Shape = this._hintCircleAr[i];
-                   var position : number = ( angleAsDegrees - ( ( 360 / ( this._hintNumber + 1 ) ) * ( i + 1 ) ) ) * ( Math.PI/180 ) ;
-                   hintShape.x = currentShape.x - ( currentShape.radius * Math.cos( position ) ) ;
-                   hintShape.y = currentShape.y - ( currentShape.radius * Math.sin( position ) );
-                   this.circlesContainer.addChild(hintShape);
-                }
-
-                // Place circle /
-
-
-            }
-            // Reupdating all the circles for now
-            // need to change this
-            //currentShape.update();
-        }
-
-        if(!highlighted)
-        {
-            // Get ride of circles highlight if not needed
-            if(this.circlesContainer.contains(this._highlightCircle)) this.circlesContainer.removeChild(this._highlightCircle);
-        }
-
-         */
     }
 
     private onStageClick ( event ) : void
@@ -302,48 +261,6 @@ class DrawView extends View
 
                 break;
         }
-
-
-        /*
-
-        // Not sure what this does?
-        //
-        for ( var i : number = 0 ; i < this._shapesArray.length ; i ++ ) {
-            var currentShape : CircleShape =  this._shapesArray[i];
-            // CLick on all circles, no need for hittest for now..
-            currentShape.onMousePress(null);
-        }
-
-
-        if(this._activeCircleShape != null )
-        {
-            // Adds Active Shape into shapes array and unactivates it
-            var currentShape : CircleShape = this._activeCircleShape;
-            this._shapesArray.push( currentShape );
-            this._activeCircleShape = null;
-        }
-
-
-
-        // If highlight is on stage that means a new one is ready to be spawned
-        // Now also creates a circle on the hints, need to move all of this to models soon.. soon
-        if(this.circlesContainer.contains(this._highlightCircle))
-        {
-
-            console.log("add circle")
-            // Add Circle Where Highlight was
-            this.addCircle( this._highlightCircle.x , this._highlightCircle.y );
-
-            // add circle(s) where hinting was
-            for( var i : number = 0  ; i < this._hintCircleAr.length ; i++ )
-            {
-                console.log("add hint circle")
-                var hintShape : createjs.Shape = this._hintCircleAr[i];
-                this.addCircle( hintShape.x , hintShape.y );
-            }
-        }
-
-         */
     }
 
     public resize() {
@@ -358,7 +275,9 @@ class DrawView extends View
     {
         this._stateModel.currentState = StateModel.STATE_RESIZING;
 
-        var circleShape : CircleShape   = new CircleShape( x , y , this.stage, StageShape.createDisplayVO() )
+
+        var circleShape : CircleShape   = new CircleShape( x , y , this.stage, StageShape.createDisplayVO(5, 5, '#'+Math.floor(Math.random()*16777215).toString(16)  ));
+
         //circleShape.onMouseClickedSignal.addOnce(this.centerCircleClick, this, 0);
         this.circlesContainer.addChild(circleShape);
         if(active) this._activeCircleShape         = circleShape;       // Make the active circle control the sizing
@@ -391,6 +310,12 @@ class DrawView extends View
     {
         this._stateModel = model;
         this._stateModel.stateChagneSignal.add(this.stateChanged, this, 0 );
+        this._stateModel.modelUpdated.add(this.modelUpdated, this, 0 );
+    }
+    private modelUpdated(): void
+    {
+        // Model update , release the clones
+        this.createCircleClones();
     }
 
     private stateChanged(): void
