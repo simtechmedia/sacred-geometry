@@ -14,14 +14,15 @@ class CircleShape extends StageShape
 
     public static STATE_INAACTIVE   : String = "STATE_INACTIVE";      // when nothing's goign on
 
+    private _level : number;        // What level the circle is at
 
-    constructor( x : number , y : number , container : createjs.Container, displayVO : DisplayVO ){
+    constructor( x : number , y : number , container : createjs.Container, level:number, displayVO : DisplayVO ){
 
         super(x,y,container);
 
-        this.x = x;
-        this.y = y;
-        console.log( "CircleShape() current x = " + this.x + " y : " + this.y );
+        this.x                  = x;
+        this.y                  = y;
+        this._level             = level;
 
         this._displayVO         = displayVO;
 
@@ -96,6 +97,12 @@ class CircleShape extends StageShape
     {
         this._radius = rad;
     }
+
+    public get level (): number
+    {
+        return this._level;
+    }
+
 
     onMouseOver(evt):void
     {

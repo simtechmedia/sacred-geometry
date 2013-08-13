@@ -11,40 +11,29 @@ class StateModel
 
     private _spawnAmount;
 
-    private _circlesArray : Array = [];
+    private _circlesArray  = [];
 
-    constructor()
-    {
+    private _currentCircleDepth : number;       // How deep the circles go
 
+    constructor() {
     }
 
-    public init()
-    {
-        this._currentState = StateModel.STATE_START;
-        this._spawnAmount = 5;
+    public init() {
+        this._currentState              = StateModel.STATE_START;
+        this._spawnAmount               = 5;
+        this._currentCircleDepth        = 0;
     }
-
+    public get currentState () : String { return this._currentState; }
     public set currentState( state : String )
     {
         this._currentState = state;
         this.stateChagneSignal.dispatch(this._currentState);
     }
 
-    public get currentState () : String
-    {
-        return this._currentState;
-    }
+    public get circlesArray ( ) : any { return this._circlesArray ; }
 
-    public set spawnAmount( num : number )
-    {
-        this._spawnAmount = num;
-        this.modelUpdated.dispatch(null);
-    }
-
-    public get spawnAmount() : number
-    {
-        return this._spawnAmount;
-    }
+    public get currentCircleDepth() : number { return this._currentCircleDepth }
+    public set currentCircleDepth( num : number ){ this._currentCircleDepth = num }
 
     public spawnAmountAdd() : void
     {
@@ -57,5 +46,12 @@ class StateModel
         {
             this.spawnAmount = this.spawnAmount-1;
         }
+    }
+
+    public get spawnAmount() : number { return this._spawnAmount; }
+    public set spawnAmount( num : number )
+    {
+        this._spawnAmount = num;
+        this.modelUpdated.dispatch(null);
     }
 }
