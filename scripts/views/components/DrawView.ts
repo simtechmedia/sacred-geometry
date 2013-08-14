@@ -236,13 +236,13 @@ class DrawView extends View
                     this._stateModel.currentCircleDepth ++;
 
                     // Add Circle Where Highlight was
+
                     this.addCircle( this._highlightCircle.x , this._highlightCircle.y, this._stateModel.currentCircleDepth,  true  );
 
                     // Clears the highlight
                     this.circlesContainer.removeChild(this._highlightCircle);
 
                     var currentCircleDepthAr   = [];
-
 
                     // add circle(s) where hinting was
                     for( var i : number = 0  ; i < this._hintCircleAr.length ; i++ )
@@ -273,6 +273,8 @@ class DrawView extends View
 
     private addCircle( x , y , level:number, active:bool = false ) : CircleShape
     {
+
+        console.log( " add circle at level " + level )
         this._stateModel.currentState = StateModel.STATE_RESIZING;
 
         var circleShape : CircleShape   = new CircleShape( x , y , this.stage, level, StageShape.createDisplayVO(5, 5, '#'+Math.floor(Math.random()*16777215).toString(16)  ));
@@ -288,7 +290,9 @@ class DrawView extends View
 
         var firstCircleArray  = [];
         var firstCircle : CircleShape = this.addCircle(shape.x, shape.y, 0 , true );
+        this._activeCircleShape = firstCircle;
         firstCircleArray.push(firstCircle);
+
         // Replace Center Circle with this one
         this._stateModel.circlesArray[0] = firstCircleArray
     }

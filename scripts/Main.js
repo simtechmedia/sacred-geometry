@@ -388,6 +388,7 @@ var DrawView = (function (_super) {
     };
     DrawView.prototype.addCircle = function (x, y, level, active) {
         if (typeof active === "undefined") { active = false; }
+        console.log(" add circle at level " + level);
         this._stateModel.currentState = StateModel.STATE_RESIZING;
         var circleShape = new CircleShape(x, y, this.stage, level, StageShape.createDisplayVO(5, 5, '#' + Math.floor(Math.random() * 16777215).toString(16)));
         this.circlesContainer.addChild(circleShape);
@@ -400,6 +401,7 @@ var DrawView = (function (_super) {
         this.circlesContainer.removeChild(shape);
         var firstCircleArray = [];
         var firstCircle = this.addCircle(shape.x, shape.y, 0, true);
+        this._activeCircleShape = firstCircle;
         firstCircleArray.push(firstCircle);
         this._stateModel.circlesArray[0] = firstCircleArray;
     };
