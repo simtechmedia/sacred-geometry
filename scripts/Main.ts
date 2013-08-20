@@ -27,7 +27,7 @@
  * User: sim
  * Date: 7/07/
  * Time: 6:10 PM
- * To change this template use File | Settings | File Templates        .
+ * To cha nge this template use File | Settings | File Templates        .
  */
 class SacretGeometry {
 
@@ -38,20 +38,20 @@ class SacretGeometry {
 
     constructor( container : HTMLElement )  {
 
-        this.container      = container ;
+        this.container              = container ;
 
-        this.stateModel     = new StateModel();
+        this.stateModel             = new StateModel();
         this.stateModel.init();
 
         // Stage Views handles keyboard listeners and resizes etc
-        this.stageView      = new StageView(this.container);
-        this.stageView.stateModel = this.stateModel;
+        this.stageView              = new StageView(this.container);
+        this.stageView.stateModel   = this.stateModel;
         this.stageView.init();
 
         // Draw View
-        this.drawView       = new DrawView(this.container);
-        this.drawView.stateModel = this.stateModel;
-        this.drawView.stage = this.stageView.stage;
+        this.drawView               = new DrawView(this.container);
+        this.drawView.stateModel    = this.stateModel;
+        this.drawView.stage         = this.stageView.stage;
         this.drawView.init();
 
     }

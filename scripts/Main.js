@@ -321,7 +321,9 @@ var DrawView = (function (_super) {
                     for(var k = 0; k < this._stateModel.circlesArray[i].length; k++) {
                         var currentShape = this._stateModel.circlesArray[i][k];
                         if(currentShape.circleHitTest(this._currentMousePos, currentShape.radius, 10)) {
+                            console.log("currentShape.level " + currentShape.level);
                             currentShape.highLight();
+                            currentShape.update();
                             var angle = currentShape.getAngleFromCenter(this._currentMousePos);
                             this.circlesContainer.addChild(this._highlightCircle);
                             this._highlightCircle.x = currentShape.x - (currentShape.radius * Math.cos(angle));
@@ -335,6 +337,8 @@ var DrawView = (function (_super) {
                                 hintShape.y = currentShape.y - (currentShape.radius * Math.sin(position));
                                 this.circlesContainer.addChild(hintShape);
                             }
+                        } else {
+                            currentShape.update();
                         }
                     }
                 }
@@ -367,9 +371,10 @@ var DrawView = (function (_super) {
             case StateModel.STATE_CREATE:
                 if(this.circlesContainer.contains(this._highlightCircle)) {
                     this._stateModel.currentCircleDepth++;
-                    this.addCircle(this._highlightCircle.x, this._highlightCircle.y, this._stateModel.currentCircleDepth, true);
-                    this.circlesContainer.removeChild(this._highlightCircle);
                     var currentCircleDepthAr = [];
+                    var newCircleFromPointer = this.addCircle(this._highlightCircle.x, this._highlightCircle.y, this._stateModel.currentCircleDepth, true);
+                    currentCircleDepthAr.push(newCircleFromPointer);
+                    this.circlesContainer.removeChild(this._highlightCircle);
                     for(var i = 0; i < this._hintCircleAr.length; i++) {
                         var hintShape = this._hintCircleAr[i];
                         var newCircleFromHint = this.addCircle(hintShape.x, hintShape.y, this._stateModel.currentCircleDepth);
@@ -390,7 +395,7 @@ var DrawView = (function (_super) {
         if (typeof active === "undefined") { active = false; }
         console.log(" add circle at level " + level);
         this._stateModel.currentState = StateModel.STATE_RESIZING;
-        var circleShape = new CircleShape(x, y, this.stage, level, StageShape.createDisplayVO(5, 5, '#' + Math.floor(Math.random() * 16777215).toString(16)));
+        var circleShape = new CircleShape(x, y, this.stage, level, StageShape.createDisplayVO(5, 10, '#' + Math.floor(Math.random() * 16777215).toString(16)));
         this.circlesContainer.addChild(circleShape);
         if(active) {
             this._activeCircleShape = circleShape;
@@ -641,6 +646,7 @@ var CircleShape = (function (_super) {
         this._strokeWidth = this._displayVO.strokeWidth;
     };
     CircleShape.prototype.highLight = function () {
+        console.log("shape should be highlighting");
         this._strokeWidth = this._displayVO.highlightStrokeWidth;
     };
     CircleShape.prototype.getAngleFromCenter = function (point) {

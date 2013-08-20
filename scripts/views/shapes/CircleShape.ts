@@ -70,6 +70,7 @@ class CircleShape extends StageShape
     // Highlights this circle, updates for one update cirlce
     public highLight()
     {
+        console.log("shape should be highlighting");
         this._strokeWidth = this._displayVO.highlightStrokeWidth;
     }
 

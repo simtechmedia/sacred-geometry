@@ -156,10 +156,11 @@ class DrawView extends View
 
                         if (  currentShape.circleHitTest( this._currentMousePos , currentShape.radius, 10 ) ) {
 
-//                            console.log("hit");
+                            console.log( "currentShape.level " + currentShape.level );
 
                             // Highlights Active Circle
                             currentShape.highLight();
+                            currentShape.update();
 
                             // Get Angle reletive to center circle ( snap effect );
                             var angle : number      = currentShape.getAngleFromCenter( this._currentMousePos );
@@ -180,6 +181,9 @@ class DrawView extends View
                                 hintShape.y = currentShape.y - ( currentShape.radius * Math.sin( position ) );
                                 this.circlesContainer.addChild(hintShape);
                             }
+                        } else {
+                            // If not hit, just update incase the highlight needs to undo
+                            currentShape.update();
                         }
                     }
                 }
@@ -237,16 +241,20 @@ class DrawView extends View
 
                     // Add Circle Where Highlight was
 
-                    this.addCircle( this._highlightCircle.x , this._highlightCircle.y, this._stateModel.currentCircleDepth,  true  );
+                    var currentCircleDepthAr   = [];
+
+                    var newCircleFromPointer  = this.addCircle( this._highlightCircle.x , this._highlightCircle.y, this._stateModel.currentCircleDepth,  true  );
+                    currentCircleDepthAr.push(newCircleFromPointer);
 
                     // Clears the highlight
                     this.circlesContainer.removeChild(this._highlightCircle);
 
-                    var currentCircleDepthAr   = [];
 
                     // add circle(s) where hinting was
                     for( var i : number = 0  ; i < this._hintCircleAr.length ; i++ )
                     {
+
+
                         var hintShape : createjs.Shape      = this._hintCircleAr[i];
                         var newCircleFromHint               = this.addCircle( hintShape.x , hintShape.y, this._stateModel.currentCircleDepth );
                         currentCircleDepthAr.push(newCircleFromHint);
@@ -277,7 +285,7 @@ class DrawView extends View
         console.log( " add circle at level " + level )
         this._stateModel.currentState = StateModel.STATE_RESIZING;
 
-        var circleShape : CircleShape   = new CircleShape( x , y , this.stage, level, StageShape.createDisplayVO(5, 5, '#'+Math.floor(Math.random()*16777215).toString(16)  ));
+        var circleShape : CircleShape   = new CircleShape( x , y , this.stage, level, StageShape.createDisplayVO(5, 10 , '#'+Math.floor(Math.random()*16777215).toString(16)  ));
         this.circlesContainer.addChild(circleShape);
         if(active) this._activeCircleShape         = circleShape;       // Make the active circle control the sizing
         return circleShape;
@@ -303,6 +311,9 @@ class DrawView extends View
      */
     private tick():void
     {
+
+
+
         //if (circle.hitTest(stage.mouseX, stage.mouseY)) { circle.alpha = 1; }
         this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS())+" fps";
         this.stage.update();
