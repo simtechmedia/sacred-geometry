@@ -199,16 +199,7 @@ class DrawView extends View
                 // Clears if highlight is not needed
                 if(!highlighted)
                 {
-                    for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
-
-                        for ( var k : number = 0 ; k < this._stateModel.circlesArray[i].length ; k ++ ) {
-
-                            var currentShape : CircleShape =  this._stateModel.circlesArray[i][k];
-                            currentShape.unHighlight();
-
-                        }
-
-                    }
+                   this.clearHighlights();
 
 
 
@@ -255,6 +246,11 @@ class DrawView extends View
             case StateModel.STATE_CREATE:
 
                 // Goes through and ask if any circle has the hightlight circle and uses that
+                // Really i should all the circles at current level
+
+                var currentLevel    : number;
+                var creating        : bool = false;
+                var currentCircleDepthAr   = [];
 
                 for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
 
@@ -266,16 +262,13 @@ class DrawView extends View
                             this._stateModel.currentCircleDepth ++;
 
                             // Add Circle Where Highlight was
-
-                            var currentCircleDepthAr   = [];
-
-                            var newCircleFromPointer  = this.addCircle( currentShape.highlightCircle.x , currentShape.highlightCircle.y, this._stateModel.currentCircleDepth,  true  );
-                            newCircleFromPointer.stateModel = this._stateModel;
+                            // This is the only 'active' circle
+                            var newCircleFromPointer            = this.addCircle( currentShape.highlightCircle.x , currentShape.highlightCircle.y, this._stateModel.currentCircleDepth,  true  );
+                            newCircleFromPointer.stateModel     = this._stateModel;
                             currentCircleDepthAr.push(newCircleFromPointer);
 
-                            // Clears the highlight
-                            //this.circlesContainer.removeChild(this._highlightCircle);
-                            //crete clear function
+                            creating                            = true;                 // Sets this to be true to next loop can look for hints
+                            currentLevel                        = currentShape.level;   // So create circles loop only searches through current level
 
                             /*
                             // add circle(s) where hinting was
@@ -298,8 +291,28 @@ class DrawView extends View
                             */
                         }
 
+
+
                     }
 
+                }
+
+                // Knows the current depth now and gets hint from all circles in same depth
+                if(creating==true)
+                {
+                    for ( var j : number = 0 ; j < this._stateModel.circlesArray[currentShape.level].length ; j++ )
+                    {
+                        var circleOnSameLevel : CircleShape = this._stateModel.circlesArray[currentShape.level][j];
+                        for( var i : number = 0  ; i < circleOnSameLevel.hintCircleShapesAr.length ; i++ ) {
+
+                            var hintShape : createjs.Shape      = circleOnSameLevel.hintCircleShapesAr[i];
+                            var newCircleFromHint               = this.addCircle( hintShape.x , hintShape.y, this._stateModel.currentCircleDepth );
+                            newCircleFromHint.stateModel        = this._stateModel ;
+                            currentCircleDepthAr.push(newCircleFromHint);
+                        }
+                    }
+                    this._stateModel.circlesArray[this._stateModel.currentCircleDepth] = currentCircleDepthAr;
+                    this.clearHighlights();
                 }
 
                 // If highlight circle is on
@@ -341,6 +354,22 @@ class DrawView extends View
                 break;
         }
     }
+
+
+    private  clearHighlights()
+    {
+        for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
+
+            for ( var k : number = 0 ; k < this._stateModel.circlesArray[i].length ; k ++ ) {
+
+                var currentShape : CircleShape =  this._stateModel.circlesArray[i][k];
+                currentShape.unHighlight();
+
+            }
+
+        }
+    }
+
 
     public resize() {
         console.log("stage resize");

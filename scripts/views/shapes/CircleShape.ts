@@ -19,10 +19,10 @@ class CircleShape extends StageShape
     private _stateModel : StateModel ;
 
     // Goign to make the hint circle inited in each circle, will eventually make it a shared circle
-    private _hintCircleAr       : createjs.Shape[];         // Hint Circle Array
+    private _hintCircleShapesAr  : createjs.Shape[];   // Hint Circle Array, shapes only
     private _highlightCircle    : HighlightCircle ;         // Circle use for pin pointing
 
-    private _highlighted        : Boolean;
+    private _highlighted        : bool;
 
     private _hasHighlightCircle : bool ;                    // If it has the highlight circle
 
@@ -56,24 +56,22 @@ class CircleShape extends StageShape
         // Initilises as active ( starts resizing soon as it puts on stage , might change thi late )
         this.currentState = CircleShape.STATE_ACTIVE;
 
-
-
     }
 
     private createCircleClones(): void
     {
         // Clear Old Ones if any
-        if( this._hintCircleAr != null)
+        if( this._hintCircleShapesAr != null)
         {
-            for ( var j : number = this._hintCircleAr.length+1 ; j > 0 ; j-- )
+            for ( var j : number = this._hintCircleShapesAr.length+1 ; j > 0 ; j-- )
             {
-                var hintShape : createjs.Shape = this._hintCircleAr[j];
+                var hintShape : createjs.Shape = this._hintCircleShapesAr[j];
                 if( this.container.contains(hintShape) ) this.container.removeChild(hintShape);
                 hintShape = null;
             }
         }
 
-        this._hintCircleAr = [];
+        this._hintCircleShapesAr = [];
 
         // Creates First Hint Circle
         var hintRadius : number     = 50;
@@ -81,7 +79,7 @@ class CircleShape extends StageShape
         hintCircle.cache( -hintRadius*1.1 , -hintRadius*1.1 , hintRadius*2*1.1 , hintRadius*2*1.1 );
 
         for( var i : number = 0 ; i < this._stateModel.spawnAmount ; i++ ) {
-            this._hintCircleAr[i] = hintCircle.hintClone;
+            this._hintCircleShapesAr[i] = hintCircle.hintClone;
         }
     }
 
@@ -100,7 +98,6 @@ class CircleShape extends StageShape
         this.graphics.setStrokeStyle(this._strokeWidth);
         this.graphics.beginStroke(this._displayVO.strokeColour);
         this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(0,0,this._radius);
-
 
         // Resets
         this._strokeWidth = this._displayVO.strokeWidth;
@@ -136,8 +133,8 @@ class CircleShape extends StageShape
             this._hasHighlightCircle = true;            // Has the highlight circle
         }
 
-        this._highlighted = true
-        this._strokeWidth = this._displayVO.highlightStrokeWidth;
+        this._highlighted       = true
+        this._strokeWidth       = this._displayVO.highlightStrokeWidth;
 
         this.container.addChild(this._highlightCircle);
         this._highlightCircle.x = this.x - ( this.radius * Math.cos( angle ) );
@@ -149,7 +146,7 @@ class CircleShape extends StageShape
         // making it to be the circles responsibility
         for( var l : number = 0 ; l < this._stateModel.spawnAmount ; l++ )
         {
-            var hintShape : createjs.Shape = this._hintCircleAr[l];
+            var hintShape : createjs.Shape = this._hintCircleShapesAr[l];
             var position : number = ( angleAsDegrees - ( ( 360 / ( this._stateModel.spawnAmount + 1 ) ) * ( l + 1 ) ) ) * ( Math.PI/180 ) ;
             hintShape.x = this.x - ( this.radius * Math.cos( position ) ) ;
             hintShape.y = this.y - ( this.radius * Math.sin( position ) );
@@ -165,16 +162,17 @@ class CircleShape extends StageShape
             this._highlighted           = false;
             this._hasHighlightCircle    = false;        // Make sure this is doesn't have highlight circle
 
-
             if(this.container.contains(this._highlightCircle))  this.container.removeChild(this._highlightCircle);
             // Clear the hints
 
-            for( var j : number = 0 ; j < this._stateModel.spawnAmount ; j++ ) {
-                var hintShape : createjs.Shape = this._hintCircleAr[j];
+            for( var j : number = 0 ; j < this._hintCircleShapesAr.length ; j++ ) {
+                var hintShape : createjs.Shape = this._hintCircleShapesAr[j];
                 if(this.container.contains(hintShape))this.container.removeChild(hintShape);
             }
         }
     }
+
+
 
     public get radius () : number
     {
@@ -208,6 +206,16 @@ class CircleShape extends StageShape
     public get highlightCircle():HighlightCircle
     {
         return this._highlightCircle;
+    }
+
+    public get hintCircleShapesAr():createjs.Shape[]
+    {
+        return this._hintCircleShapesAr;
+    }
+
+    public get highlighted():bool
+    {
+        return this._highlighted;
     }
 
     onMouseOver(evt):void

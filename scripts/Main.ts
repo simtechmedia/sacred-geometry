@@ -55,4 +55,4 @@ class SacretGeometry {
         this.drawView.init();
 
     }
-}  
+}

@@ -313,12 +313,7 @@ var DrawView = (function (_super) {
                     }
                 }
                 if(!highlighted) {
-                    for(var i = 0; i < this._stateModel.circlesArray.length; i++) {
-                        for(var k = 0; k < this._stateModel.circlesArray[i].length; k++) {
-                            var currentShape = this._stateModel.circlesArray[i][k];
-                            currentShape.unHighlight();
-                        }
-                    }
+                    this.clearHighlights();
                 }
                 break;
         }
@@ -335,19 +330,44 @@ var DrawView = (function (_super) {
                 this._stateModel.currentState = StateModel.STATE_CREATE;
                 break;
             case StateModel.STATE_CREATE:
+                var currentLevel;
+                var creating = false;
+                var currentCircleDepthAr = [];
                 for(var i = 0; i < this._stateModel.circlesArray.length; i++) {
                     for(var k = 0; k < this._stateModel.circlesArray[i].length; k++) {
                         var currentShape = this._stateModel.circlesArray[i][k];
                         if(currentShape.hasHighlightCircle) {
                             this._stateModel.currentCircleDepth++;
-                            var currentCircleDepthAr = [];
                             var newCircleFromPointer = this.addCircle(currentShape.highlightCircle.x, currentShape.highlightCircle.y, this._stateModel.currentCircleDepth, true);
                             newCircleFromPointer.stateModel = this._stateModel;
                             currentCircleDepthAr.push(newCircleFromPointer);
+                            creating = true;
+                            currentLevel = currentShape.level;
                         }
                     }
                 }
+                if(creating == true) {
+                    for(var j = 0; j < this._stateModel.circlesArray[currentShape.level].length; j++) {
+                        var circleOnSameLevel = this._stateModel.circlesArray[currentShape.level][j];
+                        for(var i = 0; i < circleOnSameLevel.hintCircleShapesAr.length; i++) {
+                            var hintShape = circleOnSameLevel.hintCircleShapesAr[i];
+                            var newCircleFromHint = this.addCircle(hintShape.x, hintShape.y, this._stateModel.currentCircleDepth);
+                            newCircleFromHint.stateModel = this._stateModel;
+                            currentCircleDepthAr.push(newCircleFromHint);
+                        }
+                    }
+                    this._stateModel.circlesArray[this._stateModel.currentCircleDepth] = currentCircleDepthAr;
+                    this.clearHighlights();
+                }
                 break;
+        }
+    };
+    DrawView.prototype.clearHighlights = function () {
+        for(var i = 0; i < this._stateModel.circlesArray.length; i++) {
+            for(var k = 0; k < this._stateModel.circlesArray[i].length; k++) {
+                var currentShape = this._stateModel.circlesArray[i][k];
+                currentShape.unHighlight();
+            }
         }
     };
     DrawView.prototype.resize = function () {
@@ -598,21 +618,21 @@ var CircleShape = (function (_super) {
     CircleShape.STATE_ACTIVE = "STATE_ACTIVE";
     CircleShape.STATE_INAACTIVE = "STATE_INACTIVE";
     CircleShape.prototype.createCircleClones = function () {
-        if(this._hintCircleAr != null) {
-            for(var j = this._hintCircleAr.length + 1; j > 0; j--) {
-                var hintShape = this._hintCircleAr[j];
+        if(this._hintCircleShapesAr != null) {
+            for(var j = this._hintCircleShapesAr.length + 1; j > 0; j--) {
+                var hintShape = this._hintCircleShapesAr[j];
                 if(this.container.contains(hintShape)) {
                     this.container.removeChild(hintShape);
                 }
                 hintShape = null;
             }
         }
-        this._hintCircleAr = [];
+        this._hintCircleShapesAr = [];
         var hintRadius = 50;
         var hintCircle = new HintCircle(0, 0, hintRadius, this.container);
         hintCircle.cache(-hintRadius * 1.1, -hintRadius * 1.1, hintRadius * 2 * 1.1, hintRadius * 2 * 1.1);
         for(var i = 0; i < this._stateModel.spawnAmount; i++) {
-            this._hintCircleAr[i] = hintCircle.hintClone;
+            this._hintCircleShapesAr[i] = hintCircle.hintClone;
         }
     };
     Object.defineProperty(CircleShape.prototype, "currentMousePos", {
@@ -650,7 +670,7 @@ var CircleShape = (function (_super) {
         this._highlightCircle.y = this.y - (this.radius * Math.sin(angle));
         var angleAsDegrees = angle * (180 / Math.PI);
         for(var l = 0; l < this._stateModel.spawnAmount; l++) {
-            var hintShape = this._hintCircleAr[l];
+            var hintShape = this._hintCircleShapesAr[l];
             var position = (angleAsDegrees - ((360 / (this._stateModel.spawnAmount + 1)) * (l + 1))) * (Math.PI / 180);
             hintShape.x = this.x - (this.radius * Math.cos(position));
             hintShape.y = this.y - (this.radius * Math.sin(position));
@@ -664,8 +684,8 @@ var CircleShape = (function (_super) {
             if(this.container.contains(this._highlightCircle)) {
                 this.container.removeChild(this._highlightCircle);
             }
-            for(var j = 0; j < this._stateModel.spawnAmount; j++) {
-                var hintShape = this._hintCircleAr[j];
+            for(var j = 0; j < this._hintCircleShapesAr.length; j++) {
+                var hintShape = this._hintCircleShapesAr[j];
                 if(this.container.contains(hintShape)) {
                     this.container.removeChild(hintShape);
                 }
@@ -707,6 +727,20 @@ var CircleShape = (function (_super) {
     Object.defineProperty(CircleShape.prototype, "highlightCircle", {
         get: function () {
             return this._highlightCircle;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CircleShape.prototype, "hintCircleShapesAr", {
+        get: function () {
+            return this._hintCircleShapesAr;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CircleShape.prototype, "highlighted", {
+        get: function () {
+            return this._highlighted;
         },
         enumerable: true,
         configurable: true
