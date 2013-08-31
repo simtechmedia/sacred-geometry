@@ -58,7 +58,7 @@ class CircleShape extends StageShape
 
     }
 
-    private createCircleClones(): void
+    public createCircleClones(): void
     {
         // Clear Old Ones if any
         if( this._hintCircleShapesAr != null)

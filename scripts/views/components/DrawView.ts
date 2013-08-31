@@ -359,17 +359,12 @@ class DrawView extends View
     private  clearHighlights()
     {
         for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
-
             for ( var k : number = 0 ; k < this._stateModel.circlesArray[i].length ; k ++ ) {
-
                 var currentShape : CircleShape =  this._stateModel.circlesArray[i][k];
                 currentShape.unHighlight();
-
             }
-
         }
     }
-
 
     public resize() {
         console.log("stage resize");
@@ -396,10 +391,10 @@ class DrawView extends View
     {
         this.circlesContainer.removeChild(shape);
 
-        var firstCircleArray  = [];
-        var firstCircle : CircleShape = this.addCircle(shape.x, shape.y, 0 , true );
-        firstCircle.stateModel = this._stateModel;
-        this._activeCircleShape = firstCircle;
+        var firstCircleArray            = [];
+        var firstCircle : CircleShape   = this.addCircle(shape.x, shape.y, 0 , true );
+        firstCircle.stateModel          = this._stateModel;
+        this._activeCircleShape         = firstCircle;
         firstCircleArray.push(firstCircle);
 
         // Replace Center Circle with this one
@@ -412,9 +407,6 @@ class DrawView extends View
      */
     private tick():void
     {
-
-
-
         //if (circle.hitTest(stage.mouseX, stage.mouseY)) { circle.alpha = 1; }
         this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS())+" fps";
         this.stage.update();
@@ -428,8 +420,14 @@ class DrawView extends View
     }
     private modelUpdated(): void
     {
-        // Model update , release the clones
-//        this.createCircleClones();
+        for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
+
+            for ( var k : number = 0 ; k < this._stateModel.circlesArray[i].length ; k ++ ) {
+
+                var currentShape : CircleShape =  this._stateModel.circlesArray[i][k];
+                currentShape.createCircleClones();
+            }
+        }
     }
 
     private stateChanged(): void
