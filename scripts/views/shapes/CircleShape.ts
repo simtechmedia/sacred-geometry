@@ -22,8 +22,9 @@ class CircleShape extends StageShape
     private _hintCircleAr       : createjs.Shape[];         // Hint Circle Array
     private _highlightCircle    : HighlightCircle ;         // Circle use for pin pointing
 
-    private _highlighted : Boolean;
+    private _highlighted        : Boolean;
 
+    private _hasHighlightCircle : bool ;                    // If it has the highlight circle
 
     constructor( x : number , y : number , container : createjs.Container, level:number, displayVO : DisplayVO ){
 
@@ -41,7 +42,7 @@ class CircleShape extends StageShape
         this.updating           = true;
 
         this._highlightCircle       = new HighlightCircle(100,100 , this.container);
-
+        this._hasHighlightCircle    = false;
         this._highlighted = false;
 
         // Inits Stroke Width
@@ -128,8 +129,12 @@ class CircleShape extends StageShape
         return theta;
     }
 
-    public highlight ( angle : number) : void
+    public highlight ( angle : number , originalCircle : bool ) : void
     {
+
+        if( originalCircle ) {
+            this._hasHighlightCircle = true;            // Has the highlight circle
+        }
 
         this._highlighted = true
         this._strokeWidth = this._displayVO.highlightStrokeWidth;
@@ -152,14 +157,14 @@ class CircleShape extends StageShape
         }
     }
 
+    // Gets rid of the highlights
     public unHighlight()
     {
-
         if(this._highlighted == true ) {
 
-            this._highlighted = false;
+            this._highlighted           = false;
+            this._hasHighlightCircle    = false;        // Make sure this is doesn't have highlight circle
 
-            console.log("unHighlight");
 
             if(this.container.contains(this._highlightCircle))  this.container.removeChild(this._highlightCircle);
             // Clear the hints
@@ -195,6 +200,15 @@ class CircleShape extends StageShape
         this.createCircleClones();
     }
 
+    public get hasHighlightCircle():bool
+    {
+        return this._hasHighlightCircle;
+    }
+
+    public get highlightCircle():HighlightCircle
+    {
+        return this._highlightCircle;
+    }
 
     onMouseOver(evt):void
     {

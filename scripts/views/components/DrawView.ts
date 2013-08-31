@@ -156,8 +156,6 @@ class DrawView extends View
 
                         if (  currentShape.circleHitTest( this._currentMousePos , currentShape.radius, 10 ) ) {
 
-                            console.log( "currentShape.level " + currentShape.level );
-
                             // Highlights Active Circle
                             //currentShape.highLight();
 
@@ -168,7 +166,7 @@ class DrawView extends View
 //                            this._highlightCircle.x = currentShape.x - ( currentShape.radius * Math.cos( angle ) );
 //                            this._highlightCircle.y = currentShape.y - ( currentShape.radius * Math.sin( angle ) );
 
-                            currentShape.highlight(angle);
+                            currentShape.highlight(angle, true);
 
                             highlighted = true;
                             // Change Mouse Icon To Circle
@@ -255,6 +253,54 @@ class DrawView extends View
                 break;
 
             case StateModel.STATE_CREATE:
+
+                // Goes through and ask if any circle has the hightlight circle and uses that
+
+                for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
+
+                    for ( var k : number = 0 ; k < this._stateModel.circlesArray[i].length ; k ++ ) {
+
+                        var currentShape : CircleShape =  this._stateModel.circlesArray[i][k];
+                        if(currentShape.hasHighlightCircle)
+                        {
+                            this._stateModel.currentCircleDepth ++;
+
+                            // Add Circle Where Highlight was
+
+                            var currentCircleDepthAr   = [];
+
+                            var newCircleFromPointer  = this.addCircle( currentShape.highlightCircle.x , currentShape.highlightCircle.y, this._stateModel.currentCircleDepth,  true  );
+                            newCircleFromPointer.stateModel = this._stateModel;
+                            currentCircleDepthAr.push(newCircleFromPointer);
+
+                            // Clears the highlight
+                            //this.circlesContainer.removeChild(this._highlightCircle);
+                            //crete clear function
+
+                            /*
+                            // add circle(s) where hinting was
+                            for( var i : number = 0  ; i < this._hintCircleAr.length ; i++ )
+                            {
+
+                                var hintShape : createjs.Shape      = this._hintCircleAr[i];
+                                var newCircleFromHint               = this.addCircle( hintShape.x , hintShape.y, this._stateModel.currentCircleDepth );
+                                newCircleFromHint                   = this._stateModel ;
+                                currentCircleDepthAr.push(newCircleFromHint);
+
+                                // Clear Hint
+                                this.circlesContainer.removeChild(hintShape);
+                            }
+                            //
+
+                            // Push the new circle depth into array
+                            this._stateModel.circlesArray[this._stateModel.currentCircleDepth] = currentCircleDepthAr;
+
+                            */
+                        }
+
+                    }
+
+                }
 
                 // If highlight circle is on
                 // then it's a valid click for a new circle

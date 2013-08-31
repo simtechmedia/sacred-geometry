@@ -301,9 +301,8 @@ var DrawView = (function (_super) {
                     for(var k = 0; k < this._stateModel.circlesArray[i].length; k++) {
                         var currentShape = this._stateModel.circlesArray[i][k];
                         if(currentShape.circleHitTest(this._currentMousePos, currentShape.radius, 10)) {
-                            console.log("currentShape.level " + currentShape.level);
                             var angle = currentShape.getAngleFromCenter(this._currentMousePos);
-                            currentShape.highlight(angle);
+                            currentShape.highlight(angle, true);
                             highlighted = true;
                             var angleAsDegrees = angle * (180 / Math.PI);
                             for(var j = 0; j < this._stateModel.circlesArray[currentShape.level].length; j++) {
@@ -336,6 +335,18 @@ var DrawView = (function (_super) {
                 this._stateModel.currentState = StateModel.STATE_CREATE;
                 break;
             case StateModel.STATE_CREATE:
+                for(var i = 0; i < this._stateModel.circlesArray.length; i++) {
+                    for(var k = 0; k < this._stateModel.circlesArray[i].length; k++) {
+                        var currentShape = this._stateModel.circlesArray[i][k];
+                        if(currentShape.hasHighlightCircle) {
+                            this._stateModel.currentCircleDepth++;
+                            var currentCircleDepthAr = [];
+                            var newCircleFromPointer = this.addCircle(currentShape.highlightCircle.x, currentShape.highlightCircle.y, this._stateModel.currentCircleDepth, true);
+                            newCircleFromPointer.stateModel = this._stateModel;
+                            currentCircleDepthAr.push(newCircleFromPointer);
+                        }
+                    }
+                }
                 break;
         }
     };
@@ -575,6 +586,7 @@ var CircleShape = (function (_super) {
         this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(1, 1, 1);
         this.updating = true;
         this._highlightCircle = new HighlightCircle(100, 100, this.container);
+        this._hasHighlightCircle = false;
         this._highlighted = false;
         this._strokeWidth = this._displayVO.strokeWidth;
         var _this = this;
@@ -627,7 +639,10 @@ var CircleShape = (function (_super) {
         }
         return theta;
     };
-    CircleShape.prototype.highlight = function (angle) {
+    CircleShape.prototype.highlight = function (angle, originalCircle) {
+        if(originalCircle) {
+            this._hasHighlightCircle = true;
+        }
         this._highlighted = true;
         this._strokeWidth = this._displayVO.highlightStrokeWidth;
         this.container.addChild(this._highlightCircle);
@@ -645,7 +660,7 @@ var CircleShape = (function (_super) {
     CircleShape.prototype.unHighlight = function () {
         if(this._highlighted == true) {
             this._highlighted = false;
-            console.log("unHighlight");
+            this._hasHighlightCircle = false;
             if(this.container.contains(this._highlightCircle)) {
                 this.container.removeChild(this._highlightCircle);
             }
@@ -678,6 +693,20 @@ var CircleShape = (function (_super) {
         set: function (model) {
             this._stateModel = model;
             this.createCircleClones();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CircleShape.prototype, "hasHighlightCircle", {
+        get: function () {
+            return this._hasHighlightCircle;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CircleShape.prototype, "highlightCircle", {
+        get: function () {
+            return this._highlightCircle;
         },
         enumerable: true,
         configurable: true
