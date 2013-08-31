@@ -16,6 +16,8 @@ class CircleShape extends StageShape
 
     private _level : number;        // What level the circle is at
 
+    private _stateModel : StateModel;
+
     constructor( x : number , y : number , container : createjs.Container, level:number, displayVO : DisplayVO ){
 
         super(x,y,container);
@@ -43,6 +45,11 @@ class CircleShape extends StageShape
 
         // Initilises as active ( starts resizing soon as it puts on stage , might change thi late )
         this.currentState = CircleShape.STATE_ACTIVE;
+
+        // For now the circles init the clones shapes, will change this
+        // to be more dynamic eventually, just wanted to get it out of the draw view
+
+
     }
 
 
@@ -102,6 +109,11 @@ class CircleShape extends StageShape
     public get level (): number
     {
         return this._level;
+    }
+
+    public set stateModel( model : StateModel )
+    {
+        this._stateModel = model;
     }
 
 

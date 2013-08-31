@@ -158,9 +158,10 @@ class DrawView extends View
 
                             console.log( "currentShape.level " + currentShape.level );
 
+
                             // Highlights Active Circle
-                            currentShape.highLight();
-                            currentShape.update();
+                            //currentShape.highLight();
+
 
                             // Get Angle reletive to center circle ( snap effect );
                             var angle : number      = currentShape.getAngleFromCenter( this._currentMousePos );
@@ -172,7 +173,16 @@ class DrawView extends View
                             // Change Mouse Icon To Circle
                             var angleAsDegrees : number = angle * (180/Math.PI);
 
-                            // Creates Hinting Circle(s)
+                            // Hightlights all circle on the same level
+                            // need to make it to create hint circles on all levels
+                            for ( var j : number = 0 ; j < this._stateModel.circlesArray[currentShape.level].length ; j++ )
+                            {
+                                var shapeThatNeedsHighliting : CircleShape = this._stateModel.circlesArray[currentShape.level][j];
+                                shapeThatNeedsHighliting.highLight();
+
+                            }
+
+                            // Creates Hinting Circle(s) on current circle
                             for( var j : number = 0 ; j < this._stateModel.spawnAmount ; j++ )
                             {
                                 var hintShape : createjs.Shape = this._hintCircleAr[j];
@@ -181,10 +191,8 @@ class DrawView extends View
                                 hintShape.y = currentShape.y - ( currentShape.radius * Math.sin( position ) );
                                 this.circlesContainer.addChild(hintShape);
                             }
-                        } else {
-                            // If not hit, just update incase the highlight needs to undo
-                            currentShape.update();
                         }
+                        currentShape.update();
                     }
                 }
 
@@ -244,6 +252,7 @@ class DrawView extends View
                     var currentCircleDepthAr   = [];
 
                     var newCircleFromPointer  = this.addCircle( this._highlightCircle.x , this._highlightCircle.y, this._stateModel.currentCircleDepth,  true  );
+                    newCircleFromPointer.stateModel = this._stateModel;
                     currentCircleDepthAr.push(newCircleFromPointer);
 
                     // Clears the highlight
@@ -254,9 +263,9 @@ class DrawView extends View
                     for( var i : number = 0  ; i < this._hintCircleAr.length ; i++ )
                     {
 
-
                         var hintShape : createjs.Shape      = this._hintCircleAr[i];
                         var newCircleFromHint               = this.addCircle( hintShape.x , hintShape.y, this._stateModel.currentCircleDepth );
+                        newCircleFromHint                   = this._stateModel ;
                         currentCircleDepthAr.push(newCircleFromHint);
 
                         // Clear Hint

@@ -322,8 +322,10 @@ var DrawView = (function (_super) {
                         var currentShape = this._stateModel.circlesArray[i][k];
                         if(currentShape.circleHitTest(this._currentMousePos, currentShape.radius, 10)) {
                             console.log("currentShape.level " + currentShape.level);
-                            currentShape.highLight();
-                            currentShape.update();
+                            for(var j = 0; j < this._stateModel.circlesArray[currentShape.level].length; j++) {
+                                var shapeThatNeedsHighliting = this._stateModel.circlesArray[currentShape.level][j];
+                                shapeThatNeedsHighliting.highLight();
+                            }
                             var angle = currentShape.getAngleFromCenter(this._currentMousePos);
                             this.circlesContainer.addChild(this._highlightCircle);
                             this._highlightCircle.x = currentShape.x - (currentShape.radius * Math.cos(angle));
@@ -337,9 +339,8 @@ var DrawView = (function (_super) {
                                 hintShape.y = currentShape.y - (currentShape.radius * Math.sin(position));
                                 this.circlesContainer.addChild(hintShape);
                             }
-                        } else {
-                            currentShape.update();
                         }
+                        currentShape.update();
                     }
                 }
                 if(!highlighted) {
