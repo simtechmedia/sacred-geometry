@@ -16,7 +16,14 @@ class CircleShape extends StageShape
 
     private _level : number;        // What level the circle is at
 
-    private _stateModel : StateModel;
+    private _stateModel : StateModel ;
+
+    // Goign to make the hint circle inited in each circle, will eventually make it a shared circle
+    private _hintCircleAr       : createjs.Shape[];         // Hint Circle Array
+    private _highlightCircle    : HighlightCircle ;         // Circle use for pin pointing
+
+    private _highlighted : Boolean;
+
 
     constructor( x : number , y : number , container : createjs.Container, level:number, displayVO : DisplayVO ){
 
@@ -33,7 +40,9 @@ class CircleShape extends StageShape
         this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(1,1,1);
         this.updating           = true;
 
+        this._highlightCircle       = new HighlightCircle(100,100 , this.container);
 
+        this._highlighted = false;
 
         // Inits Stroke Width
         this._strokeWidth       = this._displayVO.strokeWidth;
@@ -46,12 +55,34 @@ class CircleShape extends StageShape
         // Initilises as active ( starts resizing soon as it puts on stage , might change thi late )
         this.currentState = CircleShape.STATE_ACTIVE;
 
-        // For now the circles init the clones shapes, will change this
-        // to be more dynamic eventually, just wanted to get it out of the draw view
 
 
     }
 
+    private createCircleClones(): void
+    {
+        // Clear Old Ones if any
+        if( this._hintCircleAr != null)
+        {
+            for ( var j : number = this._hintCircleAr.length+1 ; j > 0 ; j-- )
+            {
+                var hintShape : createjs.Shape = this._hintCircleAr[j];
+                if( this.container.contains(hintShape) ) this.container.removeChild(hintShape);
+                hintShape = null;
+            }
+        }
+
+        this._hintCircleAr = [];
+
+        // Creates First Hint Circle
+        var hintRadius : number     = 50;
+        var hintCircle : HintCircle = new HintCircle( 0 , 0 , hintRadius,  this.container );
+        hintCircle.cache( -hintRadius*1.1 , -hintRadius*1.1 , hintRadius*2*1.1 , hintRadius*2*1.1 );
+
+        for( var i : number = 0 ; i < this._stateModel.spawnAmount ; i++ ) {
+            this._hintCircleAr[i] = hintCircle.hintClone;
+        }
+    }
 
     /*
     Find out distance from here to center
@@ -75,11 +106,12 @@ class CircleShape extends StageShape
     }
 
     // Highlights this circle, updates for one update cirlce
+    /*
     public highLight()
     {
         console.log("shape should be highlighting");
-        this._strokeWidth = this._displayVO.highlightStrokeWidth;
-    }
+
+    }*/
 
     public getAngleFromCenter ( point : Point ) : number
     {
@@ -94,6 +126,49 @@ class CircleShape extends StageShape
         //var angle : number = theta * 180 / Math.PI ;
 
         return theta;
+    }
+
+    public highlight ( angle : number) : void
+    {
+
+        this._highlighted = true
+        this._strokeWidth = this._displayVO.highlightStrokeWidth;
+
+        this.container.addChild(this._highlightCircle);
+        this._highlightCircle.x = this.x - ( this.radius * Math.cos( angle ) );
+        this._highlightCircle.y = this.y - ( this.radius * Math.sin( angle ) );
+
+        var angleAsDegrees : number = angle * (180/Math.PI);
+
+        // Creates Hinting Circle(s) on current circle
+        // making it to be the circles responsibility
+        for( var l : number = 0 ; l < this._stateModel.spawnAmount ; l++ )
+        {
+            var hintShape : createjs.Shape = this._hintCircleAr[l];
+            var position : number = ( angleAsDegrees - ( ( 360 / ( this._stateModel.spawnAmount + 1 ) ) * ( l + 1 ) ) ) * ( Math.PI/180 ) ;
+            hintShape.x = this.x - ( this.radius * Math.cos( position ) ) ;
+            hintShape.y = this.y - ( this.radius * Math.sin( position ) );
+            this.container.addChild(hintShape);
+        }
+    }
+
+    public unHighlight()
+    {
+
+        if(this._highlighted == true ) {
+
+            this._highlighted = false;
+
+            console.log("unHighlight");
+
+            if(this.container.contains(this._highlightCircle))  this.container.removeChild(this._highlightCircle);
+            // Clear the hints
+
+            for( var j : number = 0 ; j < this._stateModel.spawnAmount ; j++ ) {
+                var hintShape : createjs.Shape = this._hintCircleAr[j];
+                if(this.container.contains(hintShape))this.container.removeChild(hintShape);
+            }
+        }
     }
 
     public get radius () : number
@@ -114,6 +189,10 @@ class CircleShape extends StageShape
     public set stateModel( model : StateModel )
     {
         this._stateModel = model;
+
+        // For now the circles init the clones shapes, will change this
+        // to be more dynamic eventually, just wanted to get it out of the draw view
+        this.createCircleClones();
     }
 
 

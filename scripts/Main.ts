@@ -38,7 +38,7 @@ class SacretGeometry {
 
     constructor( container : HTMLElement )  {
 
-        this.container              = container ;
+        this.container              = container ; 
 
         this.stateModel             = new StateModel();
         this.stateModel.init();
