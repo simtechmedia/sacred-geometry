@@ -74,36 +74,8 @@ class DrawView extends View
         });
         this.resize();
 
-        // Creates Highlight circles
-//        this.createCircleClones();
     }
 
-//    private createCircleClones(): void
-//    {
-//        // Clear Old Ones if any
-//        if( this._hintCircleAr != null)
-//        {
-//            for ( var j : number = this._hintCircleAr.length+1 ; j > 0 ; j-- )
-//            {
-//                var hintShape : createjs.Shape = this._hintCircleAr[j];
-//                if( this.circlesContainer.contains(hintShape) ) this.circlesContainer.removeChild(hintShape);
-//                hintShape = null;
-//            }
-//        }
-//
-//        this._hintCircleAr = [];
-//
-//        // Creates First Hint Circle
-//        var hintRadius : number     = 50;
-//        var hintCircle : HintCircle = new HintCircle( 0 , 0 , hintRadius,  this.circlesContainer );
-//        hintCircle.cache( -hintRadius*1.1 , -hintRadius*1.1 , hintRadius*2*1.1 , hintRadius*2*1.1 );
-//
-//        for( var i : number = 0 ; i < this._stateModel.spawnAmount ; i++ )
-//        {
-//            this._hintCircleAr[i] = hintCircle.hintClone;
-//        }
-//
-//    }
 
     private onMouseMove( evt )
     {
@@ -166,7 +138,7 @@ class DrawView extends View
 //                            this._highlightCircle.x = currentShape.x - ( currentShape.radius * Math.cos( angle ) );
 //                            this._highlightCircle.y = currentShape.y - ( currentShape.radius * Math.sin( angle ) );
 
-                            currentShape.highlight(angle, true);
+                            currentShape.highlight( angle , true );     // Tells Shape to be highlighted according to angle
 
                             highlighted = true;
                             // Change Mouse Icon To Circle
@@ -177,7 +149,11 @@ class DrawView extends View
                             for ( var j : number = 0 ; j < this._stateModel.circlesArray[currentShape.level].length ; j++ )
                             {
                                 var shapeThatNeedsHighliting : CircleShape = this._stateModel.circlesArray[currentShape.level][j];
-                                //shapeThatNeedsHighliting.highLight();
+
+                                // Make sure it isn't the current shape
+                                if(shapeThatNeedsHighliting != currentShape) {
+                                    shapeThatNeedsHighliting.highlight(angle,false);
+                                }
                             }
 
                             // Creates Hinting Circle(s) on current circle
@@ -195,26 +171,10 @@ class DrawView extends View
                     }
                 }
 
-
                 // Clears if highlight is not needed
                 if(!highlighted)
                 {
                    this.clearHighlights();
-
-
-
-//                    // Get ride of circles highlight if not needed
-//                    if(this.circlesContainer.contains(this._highlightCircle))
-//                    {
-//                        this.circlesContainer.removeChild(this._highlightCircle);
-//                        // Clear the hints
-//
-//                        console.log("this._stateModel.spawnAmount = " + this._stateModel.spawnAmount);
-//                        for( var j : number = 0 ; j < this._stateModel.spawnAmount ; j++ ) {
-//                            var hintShape : createjs.Shape = this._hintCircleAr[j];
-//                            if(this.circlesContainer.contains(hintShape))this.circlesContainer.removeChild(hintShape);
-//                        }
-//                    }
                 }
                 break;
         }
@@ -307,6 +267,7 @@ class DrawView extends View
 
                             var hintShape : createjs.Shape      = circleOnSameLevel.hintCircleShapesAr[i];
                             var newCircleFromHint               = this.addCircle( hintShape.x , hintShape.y, this._stateModel.currentCircleDepth );
+                            console.log("creating circle at " + this._stateModel.currentCircleDepth )
                             newCircleFromHint.stateModel        = this._stateModel ;
                             currentCircleDepthAr.push(newCircleFromHint);
                         }
@@ -400,7 +361,6 @@ class DrawView extends View
         // Replace Center Circle with this one
         this._stateModel.circlesArray[0] = firstCircleArray
     }
-
 
     /**
      * onTick Handler

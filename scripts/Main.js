@@ -307,6 +307,9 @@ var DrawView = (function (_super) {
                             var angleAsDegrees = angle * (180 / Math.PI);
                             for(var j = 0; j < this._stateModel.circlesArray[currentShape.level].length; j++) {
                                 var shapeThatNeedsHighliting = this._stateModel.circlesArray[currentShape.level][j];
+                                if(shapeThatNeedsHighliting != currentShape) {
+                                    shapeThatNeedsHighliting.highlight(angle, false);
+                                }
                             }
                         }
                         currentShape.update();
@@ -352,6 +355,7 @@ var DrawView = (function (_super) {
                         for(var i = 0; i < circleOnSameLevel.hintCircleShapesAr.length; i++) {
                             var hintShape = circleOnSameLevel.hintCircleShapesAr[i];
                             var newCircleFromHint = this.addCircle(hintShape.x, hintShape.y, this._stateModel.currentCircleDepth);
+                            console.log("creating circle at " + this._stateModel.currentCircleDepth);
                             newCircleFromHint.stateModel = this._stateModel;
                             currentCircleDepthAr.push(newCircleFromHint);
                         }
@@ -409,6 +413,12 @@ var DrawView = (function (_super) {
         configurable: true
     });
     DrawView.prototype.modelUpdated = function () {
+        for(var i = 0; i < this._stateModel.circlesArray.length; i++) {
+            for(var k = 0; k < this._stateModel.circlesArray[i].length; k++) {
+                var currentShape = this._stateModel.circlesArray[i][k];
+                currentShape.createCircleClones();
+            }
+        }
     };
     DrawView.prototype.stateChanged = function () {
         console.log("StateChanged to " + this._stateModel.currentState);
@@ -660,21 +670,29 @@ var CircleShape = (function (_super) {
         return theta;
     };
     CircleShape.prototype.highlight = function (angle, originalCircle) {
-        if(originalCircle) {
-            this._hasHighlightCircle = true;
-        }
         this._highlighted = true;
         this._strokeWidth = this._displayVO.highlightStrokeWidth;
-        this.container.addChild(this._highlightCircle);
-        this._highlightCircle.x = this.x - (this.radius * Math.cos(angle));
-        this._highlightCircle.y = this.y - (this.radius * Math.sin(angle));
         var angleAsDegrees = angle * (180 / Math.PI);
-        for(var l = 0; l < this._stateModel.spawnAmount; l++) {
-            var hintShape = this._hintCircleShapesAr[l];
-            var position = (angleAsDegrees - ((360 / (this._stateModel.spawnAmount + 1)) * (l + 1))) * (Math.PI / 180);
-            hintShape.x = this.x - (this.radius * Math.cos(position));
-            hintShape.y = this.y - (this.radius * Math.sin(position));
-            this.container.addChild(hintShape);
+        if(originalCircle == true) {
+            this._hasHighlightCircle = true;
+            this.container.addChild(this._highlightCircle);
+            this._highlightCircle.x = this.x - (this.radius * Math.cos(angle));
+            this._highlightCircle.y = this.y - (this.radius * Math.sin(angle));
+            for(var l = 0; l < this._stateModel.spawnAmount - 1; l++) {
+                var hintShape = this._hintCircleShapesAr[l];
+                var position = (angleAsDegrees - ((360 / (this._stateModel.spawnAmount)) * (l + 1))) * (Math.PI / 180);
+                hintShape.x = this.x - (this.radius * Math.cos(position));
+                hintShape.y = this.y - (this.radius * Math.sin(position));
+                this.container.addChild(hintShape);
+            }
+        } else {
+            for(var l = 0; l < this._stateModel.spawnAmount; l++) {
+                var hintShape = this._hintCircleShapesAr[l];
+                var position = (angleAsDegrees - ((360 / (this._stateModel.spawnAmount)) * l)) * (Math.PI / 180);
+                hintShape.x = this.x - (this.radius * Math.cos(position));
+                hintShape.y = this.y - (this.radius * Math.sin(position));
+                this.container.addChild(hintShape);
+            }
         }
     };
     CircleShape.prototype.unHighlight = function () {
@@ -802,7 +820,7 @@ var StateModel = (function () {
     StateModel.STATE_RESIZING = "STATE_RESIZING";
     StateModel.prototype.init = function () {
         this._currentState = StateModel.STATE_START;
-        this._spawnAmount = 5;
+        this._spawnAmount = 6;
         this._currentCircleDepth = 0;
     };
     Object.defineProperty(StateModel.prototype, "currentState", {

@@ -20,7 +20,7 @@ class StateModel
 
     public init() {
         this._currentState              = StateModel.STATE_START;
-        this._spawnAmount               = 5;
+        this._spawnAmount               = 6;
         this._currentCircleDepth        = 0;
     }
     public get currentState () : String { return this._currentState; }

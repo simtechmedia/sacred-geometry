@@ -129,28 +129,46 @@ class CircleShape extends StageShape
     public highlight ( angle : number , originalCircle : bool ) : void
     {
 
-        if( originalCircle ) {
-            this._hasHighlightCircle = true;            // Has the highlight circle
-        }
-
         this._highlighted       = true
         this._strokeWidth       = this._displayVO.highlightStrokeWidth;
 
-        this.container.addChild(this._highlightCircle);
-        this._highlightCircle.x = this.x - ( this.radius * Math.cos( angle ) );
-        this._highlightCircle.y = this.y - ( this.radius * Math.sin( angle ) );
 
         var angleAsDegrees : number = angle * (180/Math.PI);
 
         // Creates Hinting Circle(s) on current circle
         // making it to be the circles responsibility
-        for( var l : number = 0 ; l < this._stateModel.spawnAmount ; l++ )
-        {
-            var hintShape : createjs.Shape = this._hintCircleShapesAr[l];
-            var position : number = ( angleAsDegrees - ( ( 360 / ( this._stateModel.spawnAmount + 1 ) ) * ( l + 1 ) ) ) * ( Math.PI/180 ) ;
-            hintShape.x = this.x - ( this.radius * Math.cos( position ) ) ;
-            hintShape.y = this.y - ( this.radius * Math.sin( position ) );
-            this.container.addChild(hintShape);
+
+        // If original circle is false, it needs the full amount, otherwise it's missing one because it's taken by original circle
+        if( originalCircle == true ) {
+            this._hasHighlightCircle = true;            // Has the highlight circle
+
+            // Spawn Highlight Circle
+            this.container.addChild(this._highlightCircle);
+            this._highlightCircle.x = this.x - ( this.radius * Math.cos( angle ) );
+            this._highlightCircle.y = this.y - ( this.radius * Math.sin( angle ) );
+
+            // Spawns Hints without Highlight Circle
+            for( var l : number = 0 ; l < this._stateModel.spawnAmount - 1; l++ )
+            {
+                var hintShape : createjs.Shape = this._hintCircleShapesAr[l];
+                var position : number = ( angleAsDegrees - ( ( 360 / ( this._stateModel.spawnAmount ) ) * ( l + 1 ) ) ) * ( Math.PI/180 ) ;
+                hintShape.x = this.x - ( this.radius * Math.cos( position ) ) ;
+                hintShape.y = this.y - ( this.radius * Math.sin( position ) );
+                this.container.addChild(hintShape);
+            }
+
+
+
+        } else {
+
+            for( var l : number = 0 ; l < this._stateModel.spawnAmount ; l++ )
+            {
+                var hintShape : createjs.Shape = this._hintCircleShapesAr[l];
+                var position : number = ( angleAsDegrees - ( ( 360 / ( this._stateModel.spawnAmount  ) ) *  l  ) ) * ( Math.PI/180 ) ;
+                hintShape.x = this.x - ( this.radius * Math.cos( position ) ) ;
+                hintShape.y = this.y - ( this.radius * Math.sin( position ) );
+                this.container.addChild(hintShape);
+            }
         }
     }
 
