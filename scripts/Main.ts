@@ -36,7 +36,7 @@ class SacretGeometry {
     private drawView    : DrawView;
     private stateModel  : StateModel;
 
-    constructor( container : HTMLElement )  {
+    constructor( container : HTMLElement )  { 
 
         this.container              = container ;
 

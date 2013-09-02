@@ -142,17 +142,22 @@ class DrawView extends View
 
                             highlighted = true;
                             // Change Mouse Icon To Circle
+
+
                             var angleAsDegrees : number = angle * (180/Math.PI);
+
+                            //console.log("this level has.... " + this._stateModel.circlesNumArray[ currentShape.level + 1] );
 
                             // Hightlights all circle on the same level
                             // need to make it to create hint circles on all levels
                             for ( var j : number = 0 ; j < this._stateModel.circlesArray[currentShape.level].length ; j++ )
                             {
-                                var shapeThatNeedsHighliting : CircleShape = this._stateModel.circlesArray[currentShape.level][j];
+                                // These are for the circles that don't include the active circle
+                                var nonMainCircles : CircleShape = this._stateModel.circlesArray[currentShape.level][j];
 
                                 // Make sure it isn't the current shape
-                                if(shapeThatNeedsHighliting != currentShape) {
-                                    shapeThatNeedsHighliting.highlight(angle,false);
+                                if(nonMainCircles != currentShape) {
+                                    nonMainCircles.highlight(angle,false);
                                 }
                             }
 
@@ -230,44 +235,28 @@ class DrawView extends View
                             creating                            = true;                 // Sets this to be true to next loop can look for hints
                             currentLevel                        = currentShape.level;   // So create circles loop only searches through current level
 
-                            /*
-                            // add circle(s) where hinting was
-                            for( var i : number = 0  ; i < this._hintCircleAr.length ; i++ )
-                            {
-
-                                var hintShape : createjs.Shape      = this._hintCircleAr[i];
-                                var newCircleFromHint               = this.addCircle( hintShape.x , hintShape.y, this._stateModel.currentCircleDepth );
-                                newCircleFromHint                   = this._stateModel ;
-                                currentCircleDepthAr.push(newCircleFromHint);
-
-                                // Clear Hint
-                                this.circlesContainer.removeChild(hintShape);
-                            }
-                            //
-
-                            // Push the new circle depth into array
-                            this._stateModel.circlesArray[this._stateModel.currentCircleDepth] = currentCircleDepthAr;
-
-                            */
                         }
-
-
-
                     }
 
                 }
 
                 // Knows the current depth now and gets hint from all circles in same depth
-                if(creating==true)
+                if(creating == true)
                 {
+                    // Tells The model how many numbers are spawned on the level
+                    console.log("-- creating circle");
+                    console.log(this._stateModel.spawnAmount);
+
+                    this._stateModel.circlesNumArray[this._stateModel.circlesArray[currentShape.level][0]] = this._stateModel.spawnAmount;
+                    console.log(this._stateModel.circlesNumArray);
+
+                    //console.log("currentShape.level = " + currentShape.level);
                     for ( var j : number = 0 ; j < this._stateModel.circlesArray[currentShape.level].length ; j++ )
                     {
-                        var circleOnSameLevel : CircleShape = this._stateModel.circlesArray[currentShape.level][j];
+                        var circleOnSameLevel : CircleShape     = this._stateModel.circlesArray[currentShape.level][j];
                         for( var i : number = 0  ; i < circleOnSameLevel.hintCircleShapesAr.length ; i++ ) {
-
                             var hintShape : createjs.Shape      = circleOnSameLevel.hintCircleShapesAr[i];
                             var newCircleFromHint               = this.addCircle( hintShape.x , hintShape.y, this._stateModel.currentCircleDepth );
-                            console.log("creating circle at " + this._stateModel.currentCircleDepth )
                             newCircleFromHint.stateModel        = this._stateModel ;
                             currentCircleDepthAr.push(newCircleFromHint);
                         }
@@ -275,43 +264,6 @@ class DrawView extends View
                     this._stateModel.circlesArray[this._stateModel.currentCircleDepth] = currentCircleDepthAr;
                     this.clearHighlights();
                 }
-
-                // If highlight circle is on
-                // then it's a valid click for a new circle
-//                if(this.circlesContainer.contains(this._highlightCircle))
-//                {
-//                    // Adds Cirlce Depth
-//                    this._stateModel.currentCircleDepth ++;
-//
-//                    // Add Circle Where Highlight was
-//
-//                    var currentCircleDepthAr   = [];
-//
-//                    var newCircleFromPointer  = this.addCircle( this._highlightCircle.x , this._highlightCircle.y, this._stateModel.currentCircleDepth,  true  );
-//                    newCircleFromPointer.stateModel = this._stateModel;
-//                    currentCircleDepthAr.push(newCircleFromPointer);
-//
-//                    // Clears the highlight
-//                    this.circlesContainer.removeChild(this._highlightCircle);
-//
-//
-//                    // add circle(s) where hinting was
-//                    for( var i : number = 0  ; i < this._hintCircleAr.length ; i++ )
-//                    {
-//
-//                        var hintShape : createjs.Shape      = this._hintCircleAr[i];
-//                        var newCircleFromHint               = this.addCircle( hintShape.x , hintShape.y, this._stateModel.currentCircleDepth );
-//                        newCircleFromHint                   = this._stateModel ;
-//                        currentCircleDepthAr.push(newCircleFromHint);
-//
-//                        // Clear Hint
-//                        this.circlesContainer.removeChild(hintShape);
-//                    }
-//                    //
-//
-//                    // Push the new circle depth into array
-//                    this._stateModel.circlesArray[this._stateModel.currentCircleDepth] = currentCircleDepthAr;
-//                }
                 break;
         }
     }
@@ -337,8 +289,6 @@ class DrawView extends View
 
     private addCircle( x , y , level:number, active:bool = false ) : CircleShape
     {
-
-        console.log( " add circle at level " + level )
         this._stateModel.currentState = StateModel.STATE_RESIZING;
 
         var circleShape : CircleShape   = new CircleShape( x , y , this.circlesContainer, level, StageShape.createDisplayVO(5, 10 , '#'+Math.floor(Math.random()*16777215).toString(16)  ));
@@ -357,6 +307,12 @@ class DrawView extends View
         firstCircle.stateModel          = this._stateModel;
         this._activeCircleShape         = firstCircle;
         firstCircleArray.push(firstCircle);
+
+        // First Circle always has one
+        //this._stateModel.circlesNumArray[0] = 1;
+
+
+
 
         // Replace Center Circle with this one
         this._stateModel.circlesArray[0] = firstCircleArray
@@ -381,9 +337,7 @@ class DrawView extends View
     private modelUpdated(): void
     {
         for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
-
             for ( var k : number = 0 ; k < this._stateModel.circlesArray[i].length ; k ++ ) {
-
                 var currentShape : CircleShape =  this._stateModel.circlesArray[i][k];
                 currentShape.createCircleClones();
             }

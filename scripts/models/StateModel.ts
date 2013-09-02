@@ -11,9 +11,9 @@ class StateModel
 
     private _spawnAmount;
 
-    private _circlesArray  = [];
-
-    private _currentCircleDepth : number;       // How deep the circles go
+    private _circlesArray           = [];   // Multidim Array of the circles
+    private _circlesNumArray        : number[];   // Array of how many circles in each depth
+    private _currentCircleDepth     : number;       // How deep the circles go
 
     constructor() {
     }
@@ -22,6 +22,7 @@ class StateModel
         this._currentState              = StateModel.STATE_START;
         this._spawnAmount               = 6;
         this._currentCircleDepth        = 0;
+        this._circlesArray              = [];
     }
     public get currentState () : String { return this._currentState; }
     public set currentState( state : String )
@@ -53,5 +54,10 @@ class StateModel
     {
         this._spawnAmount = num;
         this.modelUpdated.dispatch(null);
+    }
+
+    public get circlesNumArray () : number[]
+    {
+        return this._circlesNumArray;
     }
 }

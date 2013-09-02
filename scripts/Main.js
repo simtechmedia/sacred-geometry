@@ -306,9 +306,9 @@ var DrawView = (function (_super) {
                             highlighted = true;
                             var angleAsDegrees = angle * (180 / Math.PI);
                             for(var j = 0; j < this._stateModel.circlesArray[currentShape.level].length; j++) {
-                                var shapeThatNeedsHighliting = this._stateModel.circlesArray[currentShape.level][j];
-                                if(shapeThatNeedsHighliting != currentShape) {
-                                    shapeThatNeedsHighliting.highlight(angle, false);
+                                var nonMainCircles = this._stateModel.circlesArray[currentShape.level][j];
+                                if(nonMainCircles != currentShape) {
+                                    nonMainCircles.highlight(angle, false);
                                 }
                             }
                         }
@@ -350,12 +350,15 @@ var DrawView = (function (_super) {
                     }
                 }
                 if(creating == true) {
+                    console.log("-- creating circle");
+                    console.log(this._stateModel.spawnAmount);
+                    this._stateModel.circlesNumArray[this._stateModel.circlesArray[currentShape.level][0]] = this._stateModel.spawnAmount;
+                    console.log(this._stateModel.circlesNumArray);
                     for(var j = 0; j < this._stateModel.circlesArray[currentShape.level].length; j++) {
                         var circleOnSameLevel = this._stateModel.circlesArray[currentShape.level][j];
                         for(var i = 0; i < circleOnSameLevel.hintCircleShapesAr.length; i++) {
                             var hintShape = circleOnSameLevel.hintCircleShapesAr[i];
                             var newCircleFromHint = this.addCircle(hintShape.x, hintShape.y, this._stateModel.currentCircleDepth);
-                            console.log("creating circle at " + this._stateModel.currentCircleDepth);
                             newCircleFromHint.stateModel = this._stateModel;
                             currentCircleDepthAr.push(newCircleFromHint);
                         }
@@ -381,7 +384,6 @@ var DrawView = (function (_super) {
     };
     DrawView.prototype.addCircle = function (x, y, level, active) {
         if (typeof active === "undefined") { active = false; }
-        console.log(" add circle at level " + level);
         this._stateModel.currentState = StateModel.STATE_RESIZING;
         var circleShape = new CircleShape(x, y, this.circlesContainer, level, StageShape.createDisplayVO(5, 10, '#' + Math.floor(Math.random() * 16777215).toString(16)));
         this.circlesContainer.addChild(circleShape);
@@ -751,7 +753,15 @@ var CircleShape = (function (_super) {
     });
     Object.defineProperty(CircleShape.prototype, "hintCircleShapesAr", {
         get: function () {
-            return this._hintCircleShapesAr;
+            if(this._hasHighlightCircle == true) {
+                var newAr = [];
+                for(var i = 0; i < this._hintCircleShapesAr.length - 1; i++) {
+                    newAr.push(this._hintCircleShapesAr[i]);
+                }
+                return newAr;
+            } else {
+                return this._hintCircleShapesAr;
+            }
         },
         enumerable: true,
         configurable: true
@@ -822,6 +832,7 @@ var StateModel = (function () {
         this._currentState = StateModel.STATE_START;
         this._spawnAmount = 6;
         this._currentCircleDepth = 0;
+        this._circlesArray = [];
     };
     Object.defineProperty(StateModel.prototype, "currentState", {
         get: function () {
@@ -866,6 +877,13 @@ var StateModel = (function () {
         set: function (num) {
             this._spawnAmount = num;
             this.modelUpdated.dispatch(null);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(StateModel.prototype, "circlesNumArray", {
+        get: function () {
+            return this._circlesNumArray;
         },
         enumerable: true,
         configurable: true

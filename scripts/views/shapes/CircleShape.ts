@@ -157,8 +157,6 @@ class CircleShape extends StageShape
                 this.container.addChild(hintShape);
             }
 
-
-
         } else {
 
             for( var l : number = 0 ; l < this._stateModel.spawnAmount ; l++ )
@@ -228,7 +226,25 @@ class CircleShape extends StageShape
 
     public get hintCircleShapesAr():createjs.Shape[]
     {
-        return this._hintCircleShapesAr;
+
+
+        if(this._hasHighlightCircle == true ) {
+
+            // Copy Array gotta be a better way than this?
+            var newAr : createjs.Shape[] = [];
+
+            for ( var i : number = 0 ; i < this._hintCircleShapesAr.length - 1 ; i ++ ) {
+                newAr.push(this._hintCircleShapesAr[i]);
+            }
+
+            return newAr;
+
+        } else {
+
+            return this._hintCircleShapesAr;
+
+        }
+
     }
 
     public get highlighted():bool
