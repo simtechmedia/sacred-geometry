@@ -36,11 +36,11 @@ class SacretGeometry {
     private drawView    : DrawView;
     private stateModel  : StateModel;
 
-    constructor( container : HTMLElement )  { 
+    constructor( container : HTMLElement )  {
 
         this.container              = container ;
 
-        this.stateModel             = new StateModel();
+        this.stateModel             = new StateModel()
         this.stateModel.init();
 
         // Stage Views handles keyboard listeners and resizes etc
@@ -55,4 +55,4 @@ class SacretGeometry {
         this.drawView.init();
 
     }
-}
+} 

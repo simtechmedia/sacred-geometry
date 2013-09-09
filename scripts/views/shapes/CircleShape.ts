@@ -36,7 +36,7 @@ class CircleShape extends StageShape
 
         this._displayVO         = displayVO;
 
-        this.graphics.setStrokeStyle(5);
+        this.graphics.setStrokeStyle(2);
         this.graphics.beginStroke(this._displayVO.strokeColour);
         this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(1,1,1);
         this.updating           = true;
@@ -48,10 +48,6 @@ class CircleShape extends StageShape
         // Inits Stroke Width
         this._strokeWidth       = this._displayVO.strokeWidth;
 
-        var _this : CircleShape = this;
-        this.addEventListener('mousedown', function(evt) :void {
-            _this.onMousePress(evt);
-        });
 
         // Initilises as active ( starts resizing soon as it puts on stage , might change thi late )
         this.currentState = CircleShape.STATE_ACTIVE;
@@ -60,9 +56,12 @@ class CircleShape extends StageShape
 
     public createCircleClones(): void
     {
+
+        console.log("Creating clones");
         // Clear Old Ones if any
         if( this._hintCircleShapesAr != null)
         {
+            console.log("Clearing old circles")
             for ( var j : number = this._hintCircleShapesAr.length+1 ; j > 0 ; j-- )
             {
                 var hintShape : createjs.Shape = this._hintCircleShapesAr[j];
@@ -128,10 +127,8 @@ class CircleShape extends StageShape
 
     public highlight ( angle : number , originalCircle : bool ) : void
     {
-
         this._highlighted       = true
         this._strokeWidth       = this._displayVO.highlightStrokeWidth;
-
 
         var angleAsDegrees : number = angle * (180/Math.PI);
 
@@ -156,8 +153,8 @@ class CircleShape extends StageShape
                 hintShape.y = this.y - ( this.radius * Math.sin( position ) );
                 this.container.addChild(hintShape);
             }
-
         } else {
+
 
             for( var l : number = 0 ; l < this._stateModel.spawnAmount ; l++ )
             {
@@ -173,6 +170,8 @@ class CircleShape extends StageShape
     // Gets rid of the highlights
     public unHighlight()
     {
+        console.log("unHighlight");
+
         if(this._highlighted == true ) {
 
             this._highlighted           = false;
@@ -187,8 +186,6 @@ class CircleShape extends StageShape
             }
         }
     }
-
-
 
     public get radius () : number
     {
@@ -207,10 +204,21 @@ class CircleShape extends StageShape
 
     public set stateModel( model : StateModel )
     {
+        console.log("set stateModel");
         this._stateModel = model;
+
+        this._stateModel.stateChagneSignal.add(this.stateChanged, this, 0 );
 
         // For now the circles init the clones shapes, will change this
         // to be more dynamic eventually, just wanted to get it out of the draw view
+        this.createCircleClones();
+    }
+
+    private stateChanged(): void
+    {
+        console.log("state changed")
+        // State model changed, redo the circle clones incase the number changes
+        this.unHighlight();
         this.createCircleClones();
     }
 
@@ -226,25 +234,16 @@ class CircleShape extends StageShape
 
     public get hintCircleShapesAr():createjs.Shape[]
     {
-
-
         if(this._hasHighlightCircle == true ) {
-
             // Copy Array gotta be a better way than this?
             var newAr : createjs.Shape[] = [];
-
             for ( var i : number = 0 ; i < this._hintCircleShapesAr.length - 1 ; i ++ ) {
                 newAr.push(this._hintCircleShapesAr[i]);
             }
-
             return newAr;
-
         } else {
-
             return this._hintCircleShapesAr;
-
         }
-
     }
 
     public get highlighted():bool
@@ -252,16 +251,4 @@ class CircleShape extends StageShape
         return this._highlighted;
     }
 
-    onMouseOver(evt):void
-    {
-        console.log("this on over");
-        console.log(this);
-    }
-
-    onMousePress(evt):void
-    {
-        console.log("onMousePress");
-        this.onMouseClickedSignal.dispatch(this);
-        //this.updating = false;
-    }
 }

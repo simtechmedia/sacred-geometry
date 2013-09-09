@@ -240,14 +240,6 @@ var DrawView = (function (_super) {
         this._currentMousePos = new Point(0, 0);
         this.circlesContainer = new createjs.Container();
         this.stage.addChild(this.circlesContainer);
-        this.fpsLabel = new createjs.Text("-- fps", "bold 18px Give You Glory", "#000");
-        this.stage.addChild(this.fpsLabel);
-        this.fpsLabel.x = 400;
-        this.fpsLabel.y = 0;
-        this._debugBox = new createjs.Text("-- debugBox", "bold 18px Give You Glory", "#000");
-        this.stage.addChild(this._debugBox);
-        this._debugBox.x = 10;
-        this._debugBox.y = 10;
         var centerCircleArray = [];
         var centerCicle = new CenterCircle(0, 0, this.circlesContainer);
         centerCicle.removeSignal.addOnce(this.removeCenterCircle, this, 0);
@@ -272,7 +264,6 @@ var DrawView = (function (_super) {
     DrawView.prototype.onMouseMove = function (evt) {
         this._currentMousePos.x = evt.rawX - window.innerWidth / 2;
         this._currentMousePos.y = evt.rawY - window.innerHeight / 2;
-        this._debugBox.text = "xMouse: " + this._currentMousePos.x + "," + this._currentMousePos.y;
         var currentMousePoint = new Point(evt.stageX, evt.stageY);
         switch(this._stateModel.currentState) {
             case StateModel.STATE_START:
@@ -305,10 +296,12 @@ var DrawView = (function (_super) {
                             currentShape.highlight(angle, true);
                             highlighted = true;
                             var angleAsDegrees = angle * (180 / Math.PI);
+                            var circlesAtPrevLevel = this._stateModel.circlesNumArray[currentShape.level - 1];
                             for(var j = 0; j < this._stateModel.circlesArray[currentShape.level].length; j++) {
                                 var nonMainCircles = this._stateModel.circlesArray[currentShape.level][j];
                                 if(nonMainCircles != currentShape) {
-                                    nonMainCircles.highlight(angle, false);
+                                    var angleWithOffSet = (angleAsDegrees + (360 / circlesAtPrevLevel)) * (Math.PI / 180);
+                                    nonMainCircles.highlight(angleWithOffSet, false);
                                 }
                             }
                         }
@@ -351,9 +344,8 @@ var DrawView = (function (_super) {
                 }
                 if(creating == true) {
                     console.log("-- creating circle");
-                    console.log(this._stateModel.spawnAmount);
-                    this._stateModel.circlesNumArray[this._stateModel.circlesArray[currentShape.level][0]] = this._stateModel.spawnAmount;
-                    console.log(this._stateModel.circlesNumArray);
+                    this._stateModel.circlesNumArray[currentLevel + 1] = this._stateModel.spawnAmount;
+                    console.log(this._stateModel.circlesNumArray[currentLevel + 1]);
                     for(var j = 0; j < this._stateModel.circlesArray[currentShape.level].length; j++) {
                         var circleOnSameLevel = this._stateModel.circlesArray[currentShape.level][j];
                         for(var i = 0; i < circleOnSameLevel.hintCircleShapesAr.length; i++) {
@@ -385,7 +377,7 @@ var DrawView = (function (_super) {
     DrawView.prototype.addCircle = function (x, y, level, active) {
         if (typeof active === "undefined") { active = false; }
         this._stateModel.currentState = StateModel.STATE_RESIZING;
-        var circleShape = new CircleShape(x, y, this.circlesContainer, level, StageShape.createDisplayVO(5, 10, '#' + Math.floor(Math.random() * 16777215).toString(16)));
+        var circleShape = new CircleShape(x, y, this.circlesContainer, level, StageShape.createDisplayVO(2, 10, '#' + Math.floor(Math.random() * 16777215).toString(16)));
         this.circlesContainer.addChild(circleShape);
         if(active) {
             this._activeCircleShape = circleShape;
@@ -399,29 +391,20 @@ var DrawView = (function (_super) {
         firstCircle.stateModel = this._stateModel;
         this._activeCircleShape = firstCircle;
         firstCircleArray.push(firstCircle);
+        this._stateModel.circlesNumArray[0] = 1;
         this._stateModel.circlesArray[0] = firstCircleArray;
     };
     DrawView.prototype.tick = function () {
-        this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
         this.stage.update();
     };
     Object.defineProperty(DrawView.prototype, "stateModel", {
         set: function (model) {
             this._stateModel = model;
             this._stateModel.stateChagneSignal.add(this.stateChanged, this, 0);
-            this._stateModel.modelUpdated.add(this.modelUpdated, this, 0);
         },
         enumerable: true,
         configurable: true
     });
-    DrawView.prototype.modelUpdated = function () {
-        for(var i = 0; i < this._stateModel.circlesArray.length; i++) {
-            for(var k = 0; k < this._stateModel.circlesArray[i].length; k++) {
-                var currentShape = this._stateModel.circlesArray[i][k];
-                currentShape.createCircleClones();
-            }
-        }
-    };
     DrawView.prototype.stateChanged = function () {
         console.log("StateChanged to " + this._stateModel.currentState);
     };
@@ -613,7 +596,7 @@ var CircleShape = (function (_super) {
         this.y = y;
         this._level = level;
         this._displayVO = displayVO;
-        this.graphics.setStrokeStyle(5);
+        this.graphics.setStrokeStyle(2);
         this.graphics.beginStroke(this._displayVO.strokeColour);
         this.graphics.beginFill("rgba(255,255,0,0)").drawCircle(1, 1, 1);
         this.updating = true;
@@ -621,16 +604,14 @@ var CircleShape = (function (_super) {
         this._hasHighlightCircle = false;
         this._highlighted = false;
         this._strokeWidth = this._displayVO.strokeWidth;
-        var _this = this;
-        this.addEventListener('mousedown', function (evt) {
-            _this.onMousePress(evt);
-        });
         this.currentState = CircleShape.STATE_ACTIVE;
     }
     CircleShape.STATE_ACTIVE = "STATE_ACTIVE";
     CircleShape.STATE_INAACTIVE = "STATE_INACTIVE";
     CircleShape.prototype.createCircleClones = function () {
+        console.log("Creating clones");
         if(this._hintCircleShapesAr != null) {
+            console.log("Clearing old circles");
             for(var j = this._hintCircleShapesAr.length + 1; j > 0; j--) {
                 var hintShape = this._hintCircleShapesAr[j];
                 if(this.container.contains(hintShape)) {
@@ -698,6 +679,7 @@ var CircleShape = (function (_super) {
         }
     };
     CircleShape.prototype.unHighlight = function () {
+        console.log("unHighlight");
         if(this._highlighted == true) {
             this._highlighted = false;
             this._hasHighlightCircle = false;
@@ -731,12 +713,19 @@ var CircleShape = (function (_super) {
     });
     Object.defineProperty(CircleShape.prototype, "stateModel", {
         set: function (model) {
+            console.log("set stateModel");
             this._stateModel = model;
+            this._stateModel.stateChagneSignal.add(this.stateChanged, this, 0);
             this.createCircleClones();
         },
         enumerable: true,
         configurable: true
     });
+    CircleShape.prototype.stateChanged = function () {
+        console.log("state changed");
+        this.unHighlight();
+        this.createCircleClones();
+    };
     Object.defineProperty(CircleShape.prototype, "hasHighlightCircle", {
         get: function () {
             return this._hasHighlightCircle;
@@ -773,14 +762,6 @@ var CircleShape = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    CircleShape.prototype.onMouseOver = function (evt) {
-        console.log("this on over");
-        console.log(this);
-    };
-    CircleShape.prototype.onMousePress = function (evt) {
-        console.log("onMousePress");
-        this.onMouseClickedSignal.dispatch(this);
-    };
     return CircleShape;
 })(StageShape);
 var HighlightCircle = (function (_super) {
@@ -822,7 +803,6 @@ var DisplayVO = (function () {
 var StateModel = (function () {
     function StateModel() {
         this.stateChagneSignal = new Signal();
-        this.modelUpdated = new Signal();
         this._circlesArray = [];
     }
     StateModel.STATE_START = "STATE_START";
@@ -832,7 +812,7 @@ var StateModel = (function () {
         this._currentState = StateModel.STATE_START;
         this._spawnAmount = 6;
         this._currentCircleDepth = 0;
-        this._circlesArray = [];
+        this._circlesNumArray = [];
     };
     Object.defineProperty(StateModel.prototype, "currentState", {
         get: function () {
@@ -840,7 +820,6 @@ var StateModel = (function () {
         },
         set: function (state) {
             this._currentState = state;
-            this.stateChagneSignal.dispatch(this._currentState);
         },
         enumerable: true,
         configurable: true
@@ -864,10 +843,12 @@ var StateModel = (function () {
     });
     StateModel.prototype.spawnAmountAdd = function () {
         this.spawnAmount = this.spawnAmount + 1;
+        this.stateChagneSignal.dispatch(this._currentState);
     };
     StateModel.prototype.spawnAmountSubtract = function () {
         if(this._spawnAmount >= 1) {
             this.spawnAmount = this.spawnAmount - 1;
+            this.stateChagneSignal.dispatch(this._currentState);
         }
     };
     Object.defineProperty(StateModel.prototype, "spawnAmount", {
@@ -876,7 +857,7 @@ var StateModel = (function () {
         },
         set: function (num) {
             this._spawnAmount = num;
-            this.modelUpdated.dispatch(null);
+            this.stateChagneSignal.dispatch(this._currentState);
         },
         enumerable: true,
         configurable: true

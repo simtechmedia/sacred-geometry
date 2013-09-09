@@ -1,8 +1,8 @@
 class DrawView extends View
 {
-    private fpsLabel            : createjs.Text;            // FPS LABEL
+//    private fpsLabel            : createjs.Text;            // FPS LABEL
 
-    private _debugBox           : createjs.Text;            // Debug Label
+//    private _debugBox           : createjs.Text;            // Debug Label
 
     private circlesContainer    : createjs.Container;       // Container for Circles
 
@@ -33,15 +33,15 @@ class DrawView extends View
 
         // add a text object to output the current FPS:
         // might move this into a debug view soon
-        this.fpsLabel               = new createjs.Text("-- fps","bold 18px Give You Glory","#000");
-        this.stage.addChild(this.fpsLabel);
-        this.fpsLabel.x             = 400;
-        this.fpsLabel.y             = 0;
-
-        this._debugBox              = new createjs.Text("-- debugBox","bold 18px Give You Glory","#000");
-        this.stage.addChild(this._debugBox);
-        this._debugBox.x            = 10;
-        this._debugBox.y            = 10;
+//        this.fpsLabel               = new createjs.Text("-- fps","bold 18px Give You Glory","#000");
+//        this.stage.addChild(this.fpsLabel);
+//        this.fpsLabel.x             = 400;
+//        this.fpsLabel.y             = 0;
+//
+//        this._debugBox              = new createjs.Text("-- debugBox","bold 18px Give You Glory","#000");
+//        this.stage.addChild(this._debugBox);
+//        this._debugBox.x            = 10;
+//        this._debugBox.y            = 10;
 
         // First Circle Array will only have center circle
         var centerCircleArray  = [];
@@ -83,7 +83,7 @@ class DrawView extends View
         this._currentMousePos.y    = evt.rawY - window.innerHeight / 2;
 
         // Shoot out current mouse position
-        this._debugBox.text        = "xMouse: "+this._currentMousePos.x+","+this._currentMousePos.y;
+//        this._debugBox.text        = "xMouse: "+this._currentMousePos.x+","+this._currentMousePos.y;
 
         var currentMousePoint:Point = new Point( evt.stageX , evt.stageY );
 
@@ -118,6 +118,7 @@ class DrawView extends View
                 break;
 
             case StateModel.STATE_CREATE:
+
                 var highlighted : bool = false;        // To Find Out if any shape is being rolled over
 
                 for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
@@ -146,7 +147,7 @@ class DrawView extends View
 
                             var angleAsDegrees : number = angle * (180/Math.PI);
 
-                            //console.log("this level has.... " + this._stateModel.circlesNumArray[ currentShape.level + 1] );
+                            var circlesAtPrevLevel = this._stateModel.circlesNumArray[ currentShape.level - 1];
 
                             // Hightlights all circle on the same level
                             // need to make it to create hint circles on all levels
@@ -157,7 +158,11 @@ class DrawView extends View
 
                                 // Make sure it isn't the current shape
                                 if(nonMainCircles != currentShape) {
-                                    nonMainCircles.highlight(angle,false);
+
+                                    var angleWithOffSet : number = (  angleAsDegrees + (360 / circlesAtPrevLevel ) ) * ( Math.PI / 180 )  ;
+
+                                    //nonMainCircles.highlight(angle,false);
+                                    nonMainCircles.highlight(angleWithOffSet,false);
                                 }
                             }
 
@@ -245,10 +250,8 @@ class DrawView extends View
                 {
                     // Tells The model how many numbers are spawned on the level
                     console.log("-- creating circle");
-                    console.log(this._stateModel.spawnAmount);
-
-                    this._stateModel.circlesNumArray[this._stateModel.circlesArray[currentShape.level][0]] = this._stateModel.spawnAmount;
-                    console.log(this._stateModel.circlesNumArray);
+                    this._stateModel.circlesNumArray[currentLevel+1] = this._stateModel.spawnAmount;
+                    console.log(this._stateModel.circlesNumArray[currentLevel+1]);
 
                     //console.log("currentShape.level = " + currentShape.level);
                     for ( var j : number = 0 ; j < this._stateModel.circlesArray[currentShape.level].length ; j++ )
@@ -291,7 +294,7 @@ class DrawView extends View
     {
         this._stateModel.currentState = StateModel.STATE_RESIZING;
 
-        var circleShape : CircleShape   = new CircleShape( x , y , this.circlesContainer, level, StageShape.createDisplayVO(5, 10 , '#'+Math.floor(Math.random()*16777215).toString(16)  ));
+        var circleShape : CircleShape   = new CircleShape( x , y , this.circlesContainer, level, StageShape.createDisplayVO( 2, 10 , '#'+Math.floor(Math.random()*16777215).toString(16)  ));
         this.circlesContainer.addChild(circleShape);
         if(active) this._activeCircleShape         = circleShape;       // Make the active circle control the sizing
         return circleShape;
@@ -309,10 +312,7 @@ class DrawView extends View
         firstCircleArray.push(firstCircle);
 
         // First Circle always has one
-        //this._stateModel.circlesNumArray[0] = 1;
-
-
-
+        this._stateModel.circlesNumArray[0] = 1;
 
         // Replace Center Circle with this one
         this._stateModel.circlesArray[0] = firstCircleArray
@@ -324,7 +324,7 @@ class DrawView extends View
     private tick():void
     {
         //if (circle.hitTest(stage.mouseX, stage.mouseY)) { circle.alpha = 1; }
-        this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS())+" fps";
+//        this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS())+" fps";
         this.stage.update();
     }
 
@@ -332,20 +332,12 @@ class DrawView extends View
     {
         this._stateModel = model;
         this._stateModel.stateChagneSignal.add(this.stateChanged, this, 0 );
-        this._stateModel.modelUpdated.add(this.modelUpdated, this, 0 );
     }
-    private modelUpdated(): void
-    {
-        for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
-            for ( var k : number = 0 ; k < this._stateModel.circlesArray[i].length ; k ++ ) {
-                var currentShape : CircleShape =  this._stateModel.circlesArray[i][k];
-                currentShape.createCircleClones();
-            }
-        }
-    }
+
 
     private stateChanged(): void
     {
         console.log("StateChanged to " + this._stateModel.currentState );
+
     }
 }
