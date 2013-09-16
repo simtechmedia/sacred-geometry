@@ -287,31 +287,39 @@ var DrawView = (function (_super) {
                 }
                 break;
             case StateModel.STATE_CREATE:
-                var highlighted = false;
-                for(var i = 0; i < this._stateModel.circlesArray.length; i++) {
-                    for(var k = 0; k < this._stateModel.circlesArray[i].length; k++) {
-                        var currentShape = this._stateModel.circlesArray[i][k];
-                        if(currentShape.circleHitTest(this._currentMousePos, currentShape.radius, 10)) {
-                            var angle = currentShape.getAngleFromCenter(this._currentMousePos);
-                            currentShape.highlight(angle, true);
-                            highlighted = true;
-                            var angleAsDegrees = angle * (180 / Math.PI);
-                            var circlesAtPrevLevel = this._stateModel.circlesNumArray[currentShape.level - 1];
-                            for(var j = 0; j < this._stateModel.circlesArray[currentShape.level].length; j++) {
-                                var nonMainCircles = this._stateModel.circlesArray[currentShape.level][j];
-                                if(nonMainCircles != currentShape) {
-                                    var angleWithOffSet = (angleAsDegrees + (360 / circlesAtPrevLevel)) * (Math.PI / 180);
-                                    nonMainCircles.highlight(angleWithOffSet, false);
-                                }
-                            }
-                        }
-                        currentShape.update();
-                    }
-                }
-                if(!highlighted) {
-                    this.clearHighlights();
+                console.log("this._stateModel.currentCircleDepth = " + this._stateModel.currentCircleDepth);
+                console.log("StateModel.MAX_DEPTH = " + StateModel.MAX_DEPTH);
+                if(this._stateModel.currentCircleDepth <= StateModel.MAX_DEPTH) {
+                    this.spawnNewHighlights();
                 }
                 break;
+        }
+    };
+    DrawView.prototype.spawnNewHighlights = function () {
+        var highlighted = false;
+        for(var i = 0; i < this._stateModel.circlesArray.length; i++) {
+            for(var k = 0; k < this._stateModel.circlesArray[i].length; k++) {
+                var currentShape = this._stateModel.circlesArray[i][k];
+                if(currentShape.circleHitTest(this._currentMousePos, currentShape.radius, 10)) {
+                    var angle = currentShape.getAngleFromCenter(this._currentMousePos);
+                    currentShape.highlight(angle, true);
+                    highlighted = true;
+                    var angleAsDegrees = angle * (180 / Math.PI);
+                    var circlesAtPrevLevel = this._stateModel.circlesNumArray[currentShape.level];
+                    var angleSector = 360 / circlesAtPrevLevel;
+                    for(var j = 0; j < this._stateModel.circlesArray[currentShape.level].length; j++) {
+                        var nonMainCircles = this._stateModel.circlesArray[currentShape.level][j];
+                        if(nonMainCircles != currentShape) {
+                            var angleWithOffSet = (angleAsDegrees - (angleSector * j)) * (Math.PI / 180);
+                            nonMainCircles.highlight(angleWithOffSet, false);
+                        }
+                    }
+                }
+                currentShape.update();
+            }
+        }
+        if(!highlighted) {
+            this.clearHighlights();
         }
     };
     DrawView.prototype.onStageClick = function (event) {
@@ -377,7 +385,7 @@ var DrawView = (function (_super) {
     DrawView.prototype.addCircle = function (x, y, level, active) {
         if (typeof active === "undefined") { active = false; }
         this._stateModel.currentState = StateModel.STATE_RESIZING;
-        var circleShape = new CircleShape(x, y, this.circlesContainer, level, StageShape.createDisplayVO(2, 10, '#' + Math.floor(Math.random() * 16777215).toString(16)));
+        var circleShape = new CircleShape(x, y, this.circlesContainer, level, StageShape.createDisplayVO(3, 10, '#' + Math.floor(Math.random() * 16777215).toString(16)));
         this.circlesContainer.addChild(circleShape);
         if(active) {
             this._activeCircleShape = circleShape;
@@ -808,6 +816,7 @@ var StateModel = (function () {
     StateModel.STATE_START = "STATE_START";
     StateModel.STATE_CREATE = "STATE_CREATE";
     StateModel.STATE_RESIZING = "STATE_RESIZING";
+    StateModel.MAX_DEPTH = 2;
     StateModel.prototype.init = function () {
         this._currentState = StateModel.STATE_START;
         this._spawnAmount = 6;

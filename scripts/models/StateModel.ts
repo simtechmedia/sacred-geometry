@@ -6,6 +6,8 @@ class StateModel
     public static STATE_CREATE      : String = "STATE_CREATE";
     public static STATE_RESIZING    : String = "STATE_RESIZING";
 
+    public static MAX_DEPTH         : number = 2;
+
     private _currentState : String ;
 
     private _spawnAmount;
@@ -13,6 +15,7 @@ class StateModel
     private _circlesArray           = [];   // Multidim Array of the circles
     private _circlesNumArray        : number[];   // Array of how many circles in each depth
     private _currentCircleDepth     : number;       // How deep the circles go
+
 
     constructor() {
     }

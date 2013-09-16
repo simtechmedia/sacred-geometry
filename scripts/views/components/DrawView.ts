@@ -119,74 +119,62 @@ class DrawView extends View
 
             case StateModel.STATE_CREATE:
 
-                var highlighted : bool = false;        // To Find Out if any shape is being rolled over
+                if( this._stateModel.currentCircleDepth <= StateModel.MAX_DEPTH )
+                {
+                    this.spawnNewHighlights();
+                }
 
-                for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
+                break;
+        }
+    }
 
-                    for ( var k : number = 0 ; k < this._stateModel.circlesArray[i].length ; k ++ ) {
+    private spawnNewHighlights() : void
+    {
+        var highlighted : bool = false;        // To Find Out if any shape is being rolled over\
 
-                        var currentShape : CircleShape =  this._stateModel.circlesArray[i][k];
+        for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
 
-                        if (  currentShape.circleHitTest( this._currentMousePos , currentShape.radius, 10 ) ) {
+            for ( var k : number = 0 ; k < this._stateModel.circlesArray[i].length ; k ++ ) {
 
-                            // Highlights Active Circle
-                            //currentShape.highLight();
+                var currentShape : CircleShape =  this._stateModel.circlesArray[i][k];
 
-                            // Get Angle reletive to center circle ( snap effect );
-                            var angle : number      = currentShape.getAngleFromCenter( this._currentMousePos );
-                            // move temp circle to the angle of current circle
-//                            this.circlesContainer.addChild(this._highlightCircle);
-//                            this._highlightCircle.x = currentShape.x - ( currentShape.radius * Math.cos( angle ) );
-//                            this._highlightCircle.y = currentShape.y - ( currentShape.radius * Math.sin( angle ) );
+                if (  currentShape.circleHitTest( this._currentMousePos , currentShape.radius, 10 ) ) {
 
-                            currentShape.highlight( angle , true );     // Tells Shape to be highlighted according to angle
+                    // Highlights Active Circle
+                    //currentShape.highLight();
 
-                            highlighted = true;
-                            // Change Mouse Icon To Circle
+                    var angle : number      = currentShape.getAngleFromCenter( this._currentMousePos );
+                    currentShape.highlight( angle , true );     // Tells Shape to be highlighted according to angle
 
+                    highlighted = true;
+                    // Change Mouse Icon To Circle
 
-                            var angleAsDegrees : number = angle * (180/Math.PI);
+                    var angleAsDegrees : number     = angle * (180/Math.PI);
+                    var circlesAtPrevLevel          = this._stateModel.circlesNumArray[ currentShape.level];
+                    var angleSector : number        = 360 / circlesAtPrevLevel ;
 
-                            var circlesAtPrevLevel = this._stateModel.circlesNumArray[ currentShape.level - 1];
+                    // Hightlights all circle on the same level
+                    // need to make it to create hint circles on all levels
+                    for ( var j : number = 0 ; j < this._stateModel.circlesArray[currentShape.level].length ; j++ )
+                    {
+                        // These are for the circles that don't include the active circle
+                        var nonMainCircles : CircleShape = this._stateModel.circlesArray[currentShape.level][j];
 
-                            // Hightlights all circle on the same level
-                            // need to make it to create hint circles on all levels
-                            for ( var j : number = 0 ; j < this._stateModel.circlesArray[currentShape.level].length ; j++ )
-                            {
-                                // These are for the circles that don't include the active circle
-                                var nonMainCircles : CircleShape = this._stateModel.circlesArray[currentShape.level][j];
-
-                                // Make sure it isn't the current shape
-                                if(nonMainCircles != currentShape) {
-
-                                    var angleWithOffSet : number = (  angleAsDegrees + (360 / circlesAtPrevLevel ) ) * ( Math.PI / 180 )  ;
-
-                                    //nonMainCircles.highlight(angle,false);
-                                    nonMainCircles.highlight(angleWithOffSet,false);
-                                }
-                            }
-
-                            // Creates Hinting Circle(s) on current circle
-                            // making it to be the circles responsibility
-//                            for( var l : number = 0 ; l < this._stateModel.spawnAmount ; l++ )
-//                            {
-//                                var hintShape : createjs.Shape = this._hintCircleAr[j];
-//                                var position : number = ( angleAsDegrees - ( ( 360 / ( this._stateModel.spawnAmount + 1 ) ) * ( l + 1 ) ) ) * ( Math.PI/180 ) ;
-//                                hintShape.x = currentShape.x - ( currentShape.radius * Math.cos( position ) ) ;
-//                                hintShape.y = currentShape.y - ( currentShape.radius * Math.sin( position ) );
-//                                this.circlesContainer.addChild(hintShape);
-//                            }
+                        // Make sure it isn't the current shape
+                        if(nonMainCircles != currentShape) {
+                            var angleWithOffSet : number = ( angleAsDegrees - ( angleSector * j )  )  * ( Math.PI / 180 )  ;
+                            nonMainCircles.highlight(angleWithOffSet,false);
                         }
-                        currentShape.update();
                     }
                 }
+                currentShape.update();
+            }
+        }
 
-                // Clears if highlight is not needed
-                if(!highlighted)
-                {
-                   this.clearHighlights();
-                }
-                break;
+        // Clears if highlight is not needed
+        if(!highlighted)
+        {
+            this.clearHighlights();
         }
     }
 
@@ -222,6 +210,8 @@ class DrawView extends View
                 var creating        : bool = false;
                 var currentCircleDepthAr   = [];
 
+
+
                 for ( var i : number = 0 ; i < this._stateModel.circlesArray.length ; i ++ ) {
 
                     for ( var k : number = 0 ; k < this._stateModel.circlesArray[i].length ; k ++ ) {
@@ -239,11 +229,10 @@ class DrawView extends View
 
                             creating                            = true;                 // Sets this to be true to next loop can look for hints
                             currentLevel                        = currentShape.level;   // So create circles loop only searches through current level
-
                         }
                     }
-
                 }
+
 
                 // Knows the current depth now and gets hint from all circles in same depth
                 if(creating == true)
@@ -294,7 +283,7 @@ class DrawView extends View
     {
         this._stateModel.currentState = StateModel.STATE_RESIZING;
 
-        var circleShape : CircleShape   = new CircleShape( x , y , this.circlesContainer, level, StageShape.createDisplayVO( 2, 10 , '#'+Math.floor(Math.random()*16777215).toString(16)  ));
+        var circleShape : CircleShape   = new CircleShape( x , y , this.circlesContainer, level, StageShape.createDisplayVO( 3, 10 , '#'+Math.floor(Math.random()*16777215).toString(16)  ));
         this.circlesContainer.addChild(circleShape);
         if(active) this._activeCircleShape         = circleShape;       // Make the active circle control the sizing
         return circleShape;
