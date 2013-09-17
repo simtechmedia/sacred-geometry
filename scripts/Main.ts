@@ -28,7 +28,7 @@
  * User: sim
  * Date: 7/07/
  * Time: 6:10 PM
- * To cha nge this template use File | Settings | File Templates        .
+ * To cha nge this template use File | Settings | File Templates         .
  */
 class SacretGeometry {
 
@@ -37,7 +37,7 @@ class SacretGeometry {
     private drawView    : DrawView;
     private stateModel  : StateModel;
 
-    constructor( container : HTMLElement )  { 
+    constructor( container : HTMLElement )  {
 
         this.container              = container ;
 

@@ -184,14 +184,38 @@ var UIView = (function (_super) {
         document.onkeydown = function (evt) {
             _this.handleKeyDown(evt);
         };
+        this._uiContainer = new createjs.Container();
+        this.stage.addChild(this._uiContainer);
         this.fpsLabel = new createjs.Text("-- fps", "bold 18px Give You Glory", "#000");
-        this.stage.addChild(this.fpsLabel);
+        this._uiContainer.addChild(this.fpsLabel);
         this.fpsLabel.x = 400;
         this.fpsLabel.y = 0;
         this._debugBox = new createjs.Text("-- debugBox", "bold 18px Give You Glory", "#000");
-        this.stage.addChild(this._debugBox);
+        this._uiContainer.addChild(this._debugBox);
         this._debugBox.x = 10;
         this._debugBox.y = 10;
+        this._spawnAmountTxt = new createjs.Text("-- SpawnBox", "bold 18px Give You Glory", "#000");
+        this._uiContainer.addChild(this._spawnAmountTxt);
+        this._spawnAmountTxt.x = 10;
+        this._spawnAmountTxt.y = 40;
+        this._circleDepthTxt = new createjs.Text("-- SpawnBox", "bold 18px Give You Glory", "#000");
+        this._uiContainer.addChild(this._circleDepthTxt);
+        this._circleDepthTxt.x = 10;
+        this._circleDepthTxt.y = 70;
+        this._toggleUITxt = new createjs.Text("Press H to Toggle UI On and Off", "bold 18px Give You Glory", "#000");
+        this._uiContainer.addChild(this._toggleUITxt);
+        this._toggleUITxt.x = 10;
+        this._toggleUITxt.y = 100;
+        this._uiToggleBol = true;
+    };
+    UIView.prototype.toggleUI = function () {
+        if(this._uiToggleBol == true) {
+            this.stage.removeChild(this._uiContainer);
+            this._uiToggleBol = false;
+        } else {
+            this._uiToggleBol = true;
+            this.stage.add(this._uiContainer);
+        }
     };
     UIView.prototype.handleKeyDown = function (evt) {
         if(!evt) {
@@ -205,10 +229,15 @@ var UIView = (function (_super) {
             case 39:
                 this._stateModel.spawnAmountAdd();
                 break;
+            case 72:
+                this.toggleUI();
+                break;
         }
     };
     UIView.prototype.update = function () {
         this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
+        this._spawnAmountTxt.text = this._stateModel.spawnAmount + ": Spawn Amount < > to change ";
+        this._circleDepthTxt.text = this._stateModel.currentCircleDepth + ": Current Circle Depth ";
     };
     Object.defineProperty(UIView.prototype, "stateModel", {
         set: function (model) {

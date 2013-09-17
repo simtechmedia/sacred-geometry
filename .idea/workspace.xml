@@ -7,11 +7,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="05360d34-0e63-49b2-869c-240afb30380a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/views/components/DrawView.ts" afterPath="$PROJECT_DIR$/scripts/views/components/DrawView.ts" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Main.js.map" afterPath="$PROJECT_DIR$/scripts/Main.js.map" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Main.js" afterPath="$PROJECT_DIR$/scripts/Main.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Main.ts" afterPath="$PROJECT_DIR$/scripts/Main.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/views/components/StageView.ts" afterPath="$PROJECT_DIR$/scripts/views/components/StageView.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/views/components/UIView.ts" afterPath="$PROJECT_DIR$/scripts/views/components/UIView.ts" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="sacred-geometry.iws" />
@@ -35,7 +34,7 @@
     <file path="/HintCircle.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1376180659145" ignored="false" />
     <file path="/StateModel.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1379334736443" ignored="false" />
     <file path="/a.dummy" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1378900784498" ignored="false" />
-    <file path="/UIView.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1379423054548" ignored="false" />
+    <file path="/UIView.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1379424342020" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +57,7 @@
       <file leaf-file-name="DrawView.ts" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/views/components/DrawView.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="5" selection-start="710" selection-end="710" vertical-scroll-proportion="-6.470588">
+            <state line="31" column="51" selection-start="860" selection-end="968" vertical-scroll-proportion="-18.6">
               <folding />
             </state>
           </provider>
@@ -82,19 +81,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Main.ts" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Main.ts" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/Main.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="46" selection-start="1379" selection-end="1379" vertical-scroll-proportion="0.53535354">
+            <state line="44" column="31" selection-start="1518" selection-end="1518" vertical-scroll-proportion="-10.823529">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UIView.ts" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="UIView.ts" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/views/components/UIView.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="0" selection-start="1596" selection-end="1596" vertical-scroll-proportion="0.0">
+            <state line="72" column="38" selection-start="2370" selection-end="2370" vertical-scroll-proportion="0.63375795">
               <folding />
             </state>
           </provider>
@@ -149,9 +148,9 @@
         <option value="$PROJECT_DIR$/scripts/views/shapes/CircleShape.ts" />
         <option value="$PROJECT_DIR$/scripts/models/StateModel.ts" />
         <option value="$PROJECT_DIR$/scripts/views/components/StageView.ts" />
-        <option value="$PROJECT_DIR$/scripts/views/components/UIView.ts" />
         <option value="$PROJECT_DIR$/scripts/views/components/DrawView.ts" />
         <option value="$PROJECT_DIR$/scripts/Main.ts" />
+        <option value="$PROJECT_DIR$/scripts/views/components/UIView.ts" />
       </list>
     </option>
   </component>
@@ -554,20 +553,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/models/StateModel.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="48" selection-start="313" selection-end="313" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="66" selection-start="1829" selection-end="1829" vertical-scroll-proportion="-17.5">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/views/shapes/StageShape.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state line="59" column="24" selection-start="1544" selection-end="1544" vertical-scroll-proportion="0.0">
@@ -582,9 +567,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/views/components/UIView.ts">
+    <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="0" selection-start="1596" selection-end="1596" vertical-scroll-proportion="0.0">
+        <state line="28" column="66" selection-start="1829" selection-end="1829" vertical-scroll-proportion="-17.5">
           <folding />
         </state>
       </provider>
@@ -598,14 +583,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/views/components/DrawView.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="5" selection-start="710" selection-end="710" vertical-scroll-proportion="-6.470588">
+        <state line="31" column="51" selection-start="860" selection-end="968" vertical-scroll-proportion="-18.6">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/Main.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="46" selection-start="1379" selection-end="1379" vertical-scroll-proportion="0.53535354">
+        <state line="44" column="31" selection-start="1518" selection-end="1518" vertical-scroll-proportion="-10.823529">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/models/StateModel.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="48" selection-start="313" selection-end="313" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/views/components/UIView.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="72" column="38" selection-start="2370" selection-end="2370" vertical-scroll-proportion="0.63375795">
           <folding />
         </state>
       </provider>
