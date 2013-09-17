@@ -173,6 +173,53 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var UIView = (function (_super) {
+    __extends(UIView, _super);
+    function UIView(container) {
+        _super.call(this, container);
+    }
+    UIView.prototype.init = function () {
+        console.log("UIView Inited");
+        var _this = this;
+        document.onkeydown = function (evt) {
+            _this.handleKeyDown(evt);
+        };
+        this.fpsLabel = new createjs.Text("-- fps", "bold 18px Give You Glory", "#000");
+        this.stage.addChild(this.fpsLabel);
+        this.fpsLabel.x = 400;
+        this.fpsLabel.y = 0;
+        this._debugBox = new createjs.Text("-- debugBox", "bold 18px Give You Glory", "#000");
+        this.stage.addChild(this._debugBox);
+        this._debugBox.x = 10;
+        this._debugBox.y = 10;
+    };
+    UIView.prototype.handleKeyDown = function (evt) {
+        if(!evt) {
+            var evt = window.event;
+        }
+        console.log("key handle down " + this._stateModel);
+        switch(evt.keyCode) {
+            case 37:
+                this._stateModel.spawnAmountSubtract();
+                break;
+            case 39:
+                this._stateModel.spawnAmountAdd();
+                break;
+        }
+    };
+    UIView.prototype.update = function () {
+        this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
+    };
+    Object.defineProperty(UIView.prototype, "stateModel", {
+        set: function (model) {
+            console.log("Set statemdoel in stageView ");
+            this._stateModel = model;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return UIView;
+})(View);
 var StageView = (function (_super) {
     __extends(StageView, _super);
     function StageView(container) {
@@ -192,24 +239,7 @@ var StageView = (function (_super) {
         window.addEventListener('resize', function () {
             _this.resize();
         });
-        document.onkeydown = function (evt) {
-            _this.handleKeyDown(evt);
-        };
         this.resize();
-    };
-    StageView.prototype.handleKeyDown = function (evt) {
-        if(!evt) {
-            var evt = window.event;
-        }
-        console.log("key handle down " + this._stateModel);
-        switch(evt.keyCode) {
-            case 37:
-                this._stateModel.spawnAmountSubtract();
-                break;
-            case 39:
-                this._stateModel.spawnAmountAdd();
-                break;
-        }
     };
     Object.defineProperty(StageView.prototype, "stateModel", {
         set: function (model) {
@@ -240,6 +270,10 @@ var DrawView = (function (_super) {
         this._currentMousePos = new Point(0, 0);
         this.circlesContainer = new createjs.Container();
         this.stage.addChild(this.circlesContainer);
+        this._uiView = new UIView(this._container);
+        this._uiView.stateModel = this._stateModel;
+        this._uiView.stage = this._stage;
+        this._uiView.init();
         var centerCircleArray = [];
         var centerCicle = new CenterCircle(0, 0, this.circlesContainer);
         centerCicle.removeSignal.addOnce(this.removeCenterCircle, this, 0);
@@ -287,8 +321,6 @@ var DrawView = (function (_super) {
                 }
                 break;
             case StateModel.STATE_CREATE:
-                console.log("this._stateModel.currentCircleDepth = " + this._stateModel.currentCircleDepth);
-                console.log("StateModel.MAX_DEPTH = " + StateModel.MAX_DEPTH);
                 if(this._stateModel.currentCircleDepth <= StateModel.MAX_DEPTH) {
                     this.spawnNewHighlights();
                 }
@@ -403,6 +435,7 @@ var DrawView = (function (_super) {
         this._stateModel.circlesArray[0] = firstCircleArray;
     };
     DrawView.prototype.tick = function () {
+        this._uiView.update();
         this.stage.update();
     };
     Object.defineProperty(DrawView.prototype, "stateModel", {

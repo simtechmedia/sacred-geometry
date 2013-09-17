@@ -8,6 +8,7 @@
 ///<reference path="libs/greensock.d.ts" />
 
 ///<reference path="views/components/View.ts" />
+///<reference path="views/components/UIView.ts" />
 ///<reference path="views/components/StageView.ts" />
 ///<reference path="views/components/DrawView.ts" />
 ///<reference path="views/shapes/StageShape.ts" />
@@ -36,7 +37,7 @@ class SacretGeometry {
     private drawView    : DrawView;
     private stateModel  : StateModel;
 
-    constructor( container : HTMLElement )  {
+    constructor( container : HTMLElement )  { 
 
         this.container              = container ;
 
@@ -53,6 +54,10 @@ class SacretGeometry {
         this.drawView.stateModel    = this.stateModel;
         this.drawView.stage         = this.stageView.stage;
         this.drawView.init();
+
+
+
+
 
     }
 }

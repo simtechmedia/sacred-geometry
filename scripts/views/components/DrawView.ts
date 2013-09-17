@@ -1,8 +1,6 @@
 class DrawView extends View
 {
-//    private fpsLabel            : createjs.Text;            // FPS LABEL
 
-//    private _debugBox           : createjs.Text;            // Debug Label
 
     private circlesContainer    : createjs.Container;       // Container for Circles
 
@@ -18,6 +16,8 @@ class DrawView extends View
 
     private _stateModel         : StateModel;
 
+    private _uiView             : UIView;
+
     constructor( container ) {
         super(container);
     }
@@ -31,17 +31,12 @@ class DrawView extends View
         this.circlesContainer       = new createjs.Container();
         this.stage.addChild(this.circlesContainer);
 
-        // add a text object to output the current FPS:
-        // might move this into a debug view soon
-//        this.fpsLabel               = new createjs.Text("-- fps","bold 18px Give You Glory","#000");
-//        this.stage.addChild(this.fpsLabel);
-//        this.fpsLabel.x             = 400;
-//        this.fpsLabel.y             = 0;
-//
-//        this._debugBox              = new createjs.Text("-- debugBox","bold 18px Give You Glory","#000");
-//        this.stage.addChild(this._debugBox);
-//        this._debugBox.x            = 10;
-//        this._debugBox.y            = 10;
+        this._uiView                 = new UIView(this._container);
+        this._uiView.stateModel      = this._stateModel;
+        this._uiView.stage           = this._stage;
+        this._uiView.init();
+
+
 
         // First Circle Array will only have center circle
         var centerCircleArray  = [];
@@ -313,7 +308,9 @@ class DrawView extends View
     private tick():void
     {
         //if (circle.hitTest(stage.mouseX, stage.mouseY)) { circle.alpha = 1; }
-//        this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS())+" fps";
+
+        this._uiView.update();
+
         this.stage.update();
     }
 

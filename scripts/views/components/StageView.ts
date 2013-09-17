@@ -38,32 +38,12 @@ class StageView extends View
             _this.resize();
         });
 
-        // Keyboard Event Binding
-        document.onkeydown = function (evt) {
-            _this.handleKeyDown(evt);
-        };
+
 
 
         this.resize();
     }
 
-    private handleKeyDown( evt )
-    {
-
-        if(!evt){ var evt = window.event }
-
-        console.log("key handle down " + this._stateModel);
-
-        switch( evt.keyCode)
-        {
-            case 37:
-                this._stateModel.spawnAmountSubtract();
-                break;
-            case 39:
-                this._stateModel.spawnAmountAdd();
-                break;
-        }
-    }
 
     public set stateModel( model : StateModel )
     {
