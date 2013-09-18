@@ -12,10 +12,10 @@ class StateModel
 
     private _spawnAmount;
 
-    private _circlesArray           = [];   // Multidim Array of the circles
-    private _circlesNumArray        : number[];   // Array of how many circles in each depth
+    private _circlesArray           = [];           // Multidim Array of the circles
+    private _circlesNumArray        : number[];     // Array of how many circles in each depth
     private _currentCircleDepth     : number;       // How deep the circles go
-
+    private _strokeWidth            : number ;
 
     constructor() {
     }
@@ -24,6 +24,7 @@ class StateModel
         this._currentState              = StateModel.STATE_START;
         this._spawnAmount               = 6;
         this._currentCircleDepth        = 0;
+        this._strokeWidth               = 3;
         this._circlesNumArray           = [];
     }
     public get currentState () : String { return this._currentState; }
@@ -60,6 +61,12 @@ class StateModel
     {
         this._spawnAmount = num;
         this.stateChagneSignal.dispatch(this._currentState);
+    }
+
+    public get strokeWidth(): number { return this._strokeWidth }
+    public set strokeWidth( num : number )
+    {
+        this._strokeWidth = num;
     }
 
     public get circlesNumArray () : number[]

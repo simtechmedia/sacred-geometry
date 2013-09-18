@@ -204,6 +204,7 @@ class DrawView extends View
                 var currentLevel    : number;
                 var creating        : bool = false;
                 var currentCircleDepthAr   = [];
+                var curentStrokeWidth : number = this._stateModel.strokeWidth;
 
 
 
@@ -218,7 +219,7 @@ class DrawView extends View
 
                             // Add Circle Where Highlight was
                             // This is the only 'active' circle
-                            var newCircleFromPointer            = this.addCircle( currentShape.highlightCircle.x , currentShape.highlightCircle.y, this._stateModel.currentCircleDepth,  true  );
+                            var newCircleFromPointer            = this.addCircle( currentShape.highlightCircle.x , currentShape.highlightCircle.y, this._stateModel.currentCircleDepth, StageShape.createDisplayVO( curentStrokeWidth , 10 , this.generateDarkRandomCol() ),  true  );
                             newCircleFromPointer.stateModel     = this._stateModel;
                             currentCircleDepthAr.push(newCircleFromPointer);
 
@@ -233,17 +234,18 @@ class DrawView extends View
                 if(creating == true)
                 {
                     // Tells The model how many numbers are spawned on the level
-                    console.log("-- creating circle");
+//                    console.log("-- creating circle");
                     this._stateModel.circlesNumArray[currentLevel+1] = this._stateModel.spawnAmount;
-                    console.log(this._stateModel.circlesNumArray[currentLevel+1]);
+//                    console.log(this._stateModel.circlesNumArray[currentLevel+1]);
 
-                    //console.log("currentShape.level = " + currentShape.level);
+
+                        //console.log("currentShape.level = " + currentShape.level);
                     for ( var j : number = 0 ; j < this._stateModel.circlesArray[currentShape.level].length ; j++ )
                     {
                         var circleOnSameLevel : CircleShape     = this._stateModel.circlesArray[currentShape.level][j];
                         for( var i : number = 0  ; i < circleOnSameLevel.hintCircleShapesAr.length ; i++ ) {
                             var hintShape : createjs.Shape      = circleOnSameLevel.hintCircleShapesAr[i];
-                            var newCircleFromHint               = this.addCircle( hintShape.x , hintShape.y, this._stateModel.currentCircleDepth );
+                            var newCircleFromHint               = this.addCircle( hintShape.x , hintShape.y, this._stateModel.currentCircleDepth , StageShape.createDisplayVO( curentStrokeWidth , 10 , this.generateDarkRandomCol() ) );
                             newCircleFromHint.stateModel        = this._stateModel ;
                             currentCircleDepthAr.push(newCircleFromHint);
                         }
@@ -274,11 +276,11 @@ class DrawView extends View
         //this._activeCircleShape.currentMouse = new Point()
     }
 
-    private addCircle( x , y , level:number, active:bool = false ) : CircleShape
+    private addCircle( x , y , level:number, displayVO : DisplayVO, active:bool = false ) : CircleShape
     {
         this._stateModel.currentState = StateModel.STATE_RESIZING;
 
-        var circleShape : CircleShape   = new CircleShape( x , y , this.circlesContainer, level, StageShape.createDisplayVO( 3, 10 , '#'+Math.floor(Math.random()*16777215).toString(16)  ));
+        var circleShape : CircleShape   = new CircleShape( x , y , this.circlesContainer, level, displayVO );
         this.circlesContainer.addChild(circleShape);
         if(active) this._activeCircleShape         = circleShape;       // Make the active circle control the sizing
         return circleShape;
@@ -290,7 +292,7 @@ class DrawView extends View
         this.circlesContainer.removeChild(shape);
 
         var firstCircleArray            = [];
-        var firstCircle : CircleShape   = this.addCircle(shape.x, shape.y, 0 , true );
+        var firstCircle : CircleShape   = this.addCircle(shape.x, shape.y, 0 , StageShape.createDisplayVO( this._stateModel.strokeWidth, 10 , this.generateDarkRandomCol() ),  true );
         firstCircle.stateModel          = this._stateModel;
         this._activeCircleShape         = firstCircle;
         firstCircleArray.push(firstCircle);
@@ -300,6 +302,20 @@ class DrawView extends View
 
         // Replace Center Circle with this one
         this._stateModel.circlesArray[0] = firstCircleArray
+    }
+
+    private generateDarkRandomCol():string
+    {
+        function getRandomDarkString():string{
+            return Math.floor((Math.random()*125)).toString(16);
+        }
+
+        return "#"+getRandomDarkString()+getRandomDarkString()+getRandomDarkString();
+    }
+
+    private generateRandomCol():string
+    {
+        return "#"+Math.floor(Math.random()*16777215).toString(16);
     }
 
     /**

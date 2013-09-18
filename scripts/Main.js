@@ -186,26 +186,26 @@ var UIView = (function (_super) {
         };
         this._uiContainer = new createjs.Container();
         this.stage.addChild(this._uiContainer);
-        this.fpsLabel = new createjs.Text("-- fps", "bold 18px Give You Glory", "#000");
+        this.fpsLabel = new createjs.Text("-- fps", "bold 18px Arial", "#000");
         this._uiContainer.addChild(this.fpsLabel);
-        this.fpsLabel.x = 400;
-        this.fpsLabel.y = 0;
-        this._debugBox = new createjs.Text("-- debugBox", "bold 18px Give You Glory", "#000");
-        this._uiContainer.addChild(this._debugBox);
-        this._debugBox.x = 10;
-        this._debugBox.y = 10;
-        this._spawnAmountTxt = new createjs.Text("-- SpawnBox", "bold 18px Give You Glory", "#000");
+        this.fpsLabel.x = 10;
+        this.fpsLabel.y = 10;
+        this._spawnAmountTxt = new createjs.Text("-- SpawnBox", "bold 18px Arial", "#000");
         this._uiContainer.addChild(this._spawnAmountTxt);
         this._spawnAmountTxt.x = 10;
         this._spawnAmountTxt.y = 40;
-        this._circleDepthTxt = new createjs.Text("-- SpawnBox", "bold 18px Give You Glory", "#000");
+        this._circleDepthTxt = new createjs.Text("-- SpawnBox", "bold 18px Arial", "#000");
         this._uiContainer.addChild(this._circleDepthTxt);
         this._circleDepthTxt.x = 10;
         this._circleDepthTxt.y = 70;
-        this._toggleUITxt = new createjs.Text("Press H to Toggle UI On and Off", "bold 18px Give You Glory", "#000");
+        this._strokeWidthTxt = new createjs.Text("-- SpawnBox", "bold 18px Arial", "#000");
+        this._uiContainer.addChild(this._strokeWidthTxt);
+        this._strokeWidthTxt.x = 10;
+        this._strokeWidthTxt.y = 100;
+        this._toggleUITxt = new createjs.Text("Press H to Toggle UI On and Off", "bold 18px Arial", "#000");
         this._uiContainer.addChild(this._toggleUITxt);
         this._toggleUITxt.x = 10;
-        this._toggleUITxt.y = 100;
+        this._toggleUITxt.y = 130;
         this._uiToggleBol = true;
     };
     UIView.prototype.toggleUI = function () {
@@ -214,7 +214,7 @@ var UIView = (function (_super) {
             this._uiToggleBol = false;
         } else {
             this._uiToggleBol = true;
-            this.stage.add(this._uiContainer);
+            this.stage.addChild(this._uiContainer);
         }
     };
     UIView.prototype.handleKeyDown = function (evt) {
@@ -232,12 +232,40 @@ var UIView = (function (_super) {
             case 72:
                 this.toggleUI();
                 break;
+            case 49:
+                this._stateModel.strokeWidth = 1;
+                break;
+            case 50:
+                this._stateModel.strokeWidth = 2;
+                break;
+            case 51:
+                this._stateModel.strokeWidth = 3;
+                break;
+            case 52:
+                this._stateModel.strokeWidth = 4;
+                break;
+            case 53:
+                this._stateModel.strokeWidth = 5;
+                break;
+            case 54:
+                this._stateModel.strokeWidth = 6;
+                break;
+            case 55:
+                this._stateModel.strokeWidth = 7;
+                break;
+            case 56:
+                this._stateModel.strokeWidth = 8;
+                break;
+            case 57:
+                this._stateModel.strokeWidth = 9;
+                break;
         }
     };
     UIView.prototype.update = function () {
         this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
-        this._spawnAmountTxt.text = this._stateModel.spawnAmount + ": Spawn Amount < > to change ";
-        this._circleDepthTxt.text = this._stateModel.currentCircleDepth + ": Current Circle Depth ";
+        this._spawnAmountTxt.text = "[" + this._stateModel.spawnAmount + "] Spawn Amount - Arrows Keys to change ";
+        this._circleDepthTxt.text = "[" + this._stateModel.currentCircleDepth + "] Current Circle Depth ";
+        this._strokeWidthTxt.text = "[" + this._stateModel.strokeWidth + "] Stroke Width - Number Keys to change ";
     };
     Object.defineProperty(UIView.prototype, "stateModel", {
         set: function (model) {
@@ -398,12 +426,13 @@ var DrawView = (function (_super) {
                 var currentLevel;
                 var creating = false;
                 var currentCircleDepthAr = [];
+                var curentStrokeWidth = this._stateModel.strokeWidth;
                 for(var i = 0; i < this._stateModel.circlesArray.length; i++) {
                     for(var k = 0; k < this._stateModel.circlesArray[i].length; k++) {
                         var currentShape = this._stateModel.circlesArray[i][k];
                         if(currentShape.hasHighlightCircle) {
                             this._stateModel.currentCircleDepth++;
-                            var newCircleFromPointer = this.addCircle(currentShape.highlightCircle.x, currentShape.highlightCircle.y, this._stateModel.currentCircleDepth, true);
+                            var newCircleFromPointer = this.addCircle(currentShape.highlightCircle.x, currentShape.highlightCircle.y, this._stateModel.currentCircleDepth, StageShape.createDisplayVO(curentStrokeWidth, 10, this.generateDarkRandomCol()), true);
                             newCircleFromPointer.stateModel = this._stateModel;
                             currentCircleDepthAr.push(newCircleFromPointer);
                             creating = true;
@@ -412,14 +441,12 @@ var DrawView = (function (_super) {
                     }
                 }
                 if(creating == true) {
-                    console.log("-- creating circle");
                     this._stateModel.circlesNumArray[currentLevel + 1] = this._stateModel.spawnAmount;
-                    console.log(this._stateModel.circlesNumArray[currentLevel + 1]);
                     for(var j = 0; j < this._stateModel.circlesArray[currentShape.level].length; j++) {
                         var circleOnSameLevel = this._stateModel.circlesArray[currentShape.level][j];
                         for(var i = 0; i < circleOnSameLevel.hintCircleShapesAr.length; i++) {
                             var hintShape = circleOnSameLevel.hintCircleShapesAr[i];
-                            var newCircleFromHint = this.addCircle(hintShape.x, hintShape.y, this._stateModel.currentCircleDepth);
+                            var newCircleFromHint = this.addCircle(hintShape.x, hintShape.y, this._stateModel.currentCircleDepth, StageShape.createDisplayVO(curentStrokeWidth, 10, this.generateDarkRandomCol()));
                             newCircleFromHint.stateModel = this._stateModel;
                             currentCircleDepthAr.push(newCircleFromHint);
                         }
@@ -443,10 +470,10 @@ var DrawView = (function (_super) {
         this.circlesContainer.x = window.innerWidth / 2;
         this.circlesContainer.y = window.innerHeight / 2;
     };
-    DrawView.prototype.addCircle = function (x, y, level, active) {
+    DrawView.prototype.addCircle = function (x, y, level, displayVO, active) {
         if (typeof active === "undefined") { active = false; }
         this._stateModel.currentState = StateModel.STATE_RESIZING;
-        var circleShape = new CircleShape(x, y, this.circlesContainer, level, StageShape.createDisplayVO(3, 10, '#' + Math.floor(Math.random() * 16777215).toString(16)));
+        var circleShape = new CircleShape(x, y, this.circlesContainer, level, displayVO);
         this.circlesContainer.addChild(circleShape);
         if(active) {
             this._activeCircleShape = circleShape;
@@ -456,12 +483,21 @@ var DrawView = (function (_super) {
     DrawView.prototype.removeCenterCircle = function (shape) {
         this.circlesContainer.removeChild(shape);
         var firstCircleArray = [];
-        var firstCircle = this.addCircle(shape.x, shape.y, 0, true);
+        var firstCircle = this.addCircle(shape.x, shape.y, 0, StageShape.createDisplayVO(this._stateModel.strokeWidth, 10, this.generateDarkRandomCol()), true);
         firstCircle.stateModel = this._stateModel;
         this._activeCircleShape = firstCircle;
         firstCircleArray.push(firstCircle);
         this._stateModel.circlesNumArray[0] = 1;
         this._stateModel.circlesArray[0] = firstCircleArray;
+    };
+    DrawView.prototype.generateDarkRandomCol = function () {
+        function getRandomDarkString() {
+            return Math.floor((Math.random() * 125)).toString(16);
+        }
+        return "#" + getRandomDarkString() + getRandomDarkString() + getRandomDarkString();
+    };
+    DrawView.prototype.generateRandomCol = function () {
+        return "#" + Math.floor(Math.random() * 16777215).toString(16);
     };
     DrawView.prototype.tick = function () {
         this._uiView.update();
@@ -679,9 +715,7 @@ var CircleShape = (function (_super) {
     CircleShape.STATE_ACTIVE = "STATE_ACTIVE";
     CircleShape.STATE_INAACTIVE = "STATE_INACTIVE";
     CircleShape.prototype.createCircleClones = function () {
-        console.log("Creating clones");
         if(this._hintCircleShapesAr != null) {
-            console.log("Clearing old circles");
             for(var j = this._hintCircleShapesAr.length + 1; j > 0; j--) {
                 var hintShape = this._hintCircleShapesAr[j];
                 if(this.container.contains(hintShape)) {
@@ -749,7 +783,6 @@ var CircleShape = (function (_super) {
         }
     };
     CircleShape.prototype.unHighlight = function () {
-        console.log("unHighlight");
         if(this._highlighted == true) {
             this._highlighted = false;
             this._hasHighlightCircle = false;
@@ -783,7 +816,6 @@ var CircleShape = (function (_super) {
     });
     Object.defineProperty(CircleShape.prototype, "stateModel", {
         set: function (model) {
-            console.log("set stateModel");
             this._stateModel = model;
             this._stateModel.stateChagneSignal.add(this.stateChanged, this, 0);
             this.createCircleClones();
@@ -792,7 +824,6 @@ var CircleShape = (function (_super) {
         configurable: true
     });
     CircleShape.prototype.stateChanged = function () {
-        console.log("state changed");
         this.unHighlight();
         this.createCircleClones();
     };
@@ -883,6 +914,7 @@ var StateModel = (function () {
         this._currentState = StateModel.STATE_START;
         this._spawnAmount = 6;
         this._currentCircleDepth = 0;
+        this._strokeWidth = 3;
         this._circlesNumArray = [];
     };
     Object.defineProperty(StateModel.prototype, "currentState", {
@@ -929,6 +961,16 @@ var StateModel = (function () {
         set: function (num) {
             this._spawnAmount = num;
             this.stateChagneSignal.dispatch(this._currentState);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(StateModel.prototype, "strokeWidth", {
+        get: function () {
+            return this._strokeWidth;
+        },
+        set: function (num) {
+            this._strokeWidth = num;
         },
         enumerable: true,
         configurable: true

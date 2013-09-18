@@ -5,13 +5,15 @@ class UIView extends View
 
     private fpsLabel            : createjs.Text;            // FPS LABEL
 
-    private _debugBox           : createjs.Text;            // Debug Label
-
     private _spawnAmountTxt     : createjs.Text;
 
     private _circleDepthTxt     : createjs.Text;
 
+    private _strokeWidthTxt     : createjs.Text;
+
     private _toggleUITxt        : createjs.Text;
+
+
     private _uiToggleBol        : bool;
 
     private _uiContainer         : createjs.Container;
@@ -35,37 +37,33 @@ class UIView extends View
 
         // add a text object to output the current FPS:
         // might move this into a debug view soon
-        this.fpsLabel               = new createjs.Text("-- fps","bold 18px Give You Glory","#000");
+        this.fpsLabel               = new createjs.Text("-- fps","bold 18px Arial","#000");
         this._uiContainer.addChild(this.fpsLabel);
-        this.fpsLabel.x             = 400;
-        this.fpsLabel.y             = 0;
+        this.fpsLabel.x             = 10;
+        this.fpsLabel.y             = 10;
 
-        this._debugBox              = new createjs.Text("-- debugBox","bold 18px Give You Glory","#000");
-        this._uiContainer.addChild(this._debugBox);
-        this._debugBox.x            = 10;
-        this._debugBox.y            = 10;
-
-        this._spawnAmountTxt              = new createjs.Text("-- SpawnBox","bold 18px Give You Glory","#000");
+        this._spawnAmountTxt              = new createjs.Text("-- SpawnBox","bold 18px Arial","#000");
         this._uiContainer.addChild(this._spawnAmountTxt);
         this._spawnAmountTxt.x            = 10;
         this._spawnAmountTxt.y            = 40;
 
-
-        this._circleDepthTxt              = new createjs.Text("-- SpawnBox","bold 18px Give You Glory","#000");
+        this._circleDepthTxt              = new createjs.Text("-- SpawnBox","bold 18px Arial","#000");
         this._uiContainer.addChild(this._circleDepthTxt);
         this._circleDepthTxt.x            = 10;
         this._circleDepthTxt.y            = 70;
 
-        this._toggleUITxt              = new createjs.Text("Press H to Toggle UI On and Off","bold 18px Give You Glory","#000");
+
+        this._strokeWidthTxt              = new createjs.Text("-- SpawnBox","bold 18px Arial","#000");
+        this._uiContainer.addChild(this._strokeWidthTxt);
+        this._strokeWidthTxt.x            = 10;
+        this._strokeWidthTxt.y            = 100;
+
+        this._toggleUITxt              = new createjs.Text("Press H to Toggle UI On and Off","bold 18px Arial","#000");
         this._uiContainer.addChild(this._toggleUITxt);
         this._toggleUITxt.x            = 10;
-        this._toggleUITxt.y            = 100;
-
+        this._toggleUITxt.y            = 130;
 
         this._uiToggleBol = true;
-
-
-
     }
 
     private toggleUI():void
@@ -76,7 +74,7 @@ class UIView extends View
             this._uiToggleBol = false;
         } else {
             this._uiToggleBol = true;
-            this.stage.add(this._uiContainer);
+            this.stage.addChild(this._uiContainer);
 
         }
     }
@@ -98,15 +96,42 @@ class UIView extends View
             case 72:
                 this.toggleUI();
                 break;
+            case 49:
+                this._stateModel.strokeWidth = 1;
+                break;
+            case 50:
+                this._stateModel.strokeWidth = 2;
+                break;
+            case 51:
+                this._stateModel.strokeWidth = 3;
+                break;
+            case 52:
+                this._stateModel.strokeWidth = 4;
+                break;
+            case 53:
+                this._stateModel.strokeWidth = 5;
+                break;
+            case 54:
+                this._stateModel.strokeWidth = 6;
+                break;
+            case 55:
+                this._stateModel.strokeWidth = 7;
+                break;
+            case 56:
+                this._stateModel.strokeWidth = 8;
+                break;
+            case 57:
+                this._stateModel.strokeWidth = 9;
+                break;
         }
     }
 
     public update():void
     {
         this.fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS())+" fps";
-        this._spawnAmountTxt.text = this._stateModel.spawnAmount + ": Spawn Amount < > to change ";
-        this._circleDepthTxt.text = this._stateModel.currentCircleDepth + ": Current Circle Depth ";
-
+        this._spawnAmountTxt.text = "[" + this._stateModel.spawnAmount + "] Spawn Amount - Arrows Keys to change ";
+        this._circleDepthTxt.text = "[" + this._stateModel.currentCircleDepth + "] Current Circle Depth ";
+        this._strokeWidthTxt.text = "[" + this._stateModel.strokeWidth + "] Stroke Width - Number Keys to change ";
     }
 
     public set stateModel( model : StateModel )

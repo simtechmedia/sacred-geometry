@@ -54,10 +54,5 @@ class SacretGeometry {
         this.drawView.stateModel    = this.stateModel;
         this.drawView.stage         = this.stageView.stage;
         this.drawView.init();
-
-
-
-
-
     }
 }
