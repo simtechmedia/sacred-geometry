@@ -123,6 +123,15 @@ class UIView extends View
             case 57:
                 this._stateModel.strokeWidth = 9;
                 break;
+            case 90:
+                // Undo Button
+                this._stateModel.undo();
+                break;
+            case 82:
+                // Reset
+                this._stateModel.reset();
+                break;
+
         }
     }
 

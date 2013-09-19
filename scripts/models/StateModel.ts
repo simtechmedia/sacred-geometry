@@ -73,4 +73,16 @@ class StateModel
     {
         return this._circlesNumArray;
     }
+
+    public reset() {
+
+        console.log( "Reset" );
+
+    }
+
+    public undo() {
+
+        console.log("undo")
+    }
+
 }

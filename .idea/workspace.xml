@@ -7,14 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="05360d34-0e63-49b2-869c-240afb30380a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/views/shapes/CircleShape.ts" afterPath="$PROJECT_DIR$/scripts/views/shapes/CircleShape.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/views/components/DrawView.ts" afterPath="$PROJECT_DIR$/scripts/views/components/DrawView.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Main.js.map" afterPath="$PROJECT_DIR$/scripts/Main.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Main.js" afterPath="$PROJECT_DIR$/scripts/Main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Main.ts" afterPath="$PROJECT_DIR$/scripts/Main.ts" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/models/StateModel.ts" afterPath="$PROJECT_DIR$/scripts/models/StateModel.ts" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/views/components/UIView.ts" afterPath="$PROJECT_DIR$/scripts/views/components/UIView.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="sacred-geometry.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,9 +29,9 @@
     <file path="/DisplayVO.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1374067250286" ignored="false" />
     <file path="/HighlightCircle.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1375578623464" ignored="false" />
     <file path="/HintCircle.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1376180659145" ignored="false" />
-    <file path="/StateModel.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1379498249021" ignored="false" />
+    <file path="/StateModel.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1379511333147" ignored="false" />
     <file path="/a.dummy" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1378900784498" ignored="false" />
-    <file path="/UIView.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1379510068918" ignored="false" />
+    <file path="/UIView.ts" changelist="05360d34-0e63-49b2-869c-240afb30380a" time="1379511359429" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,10 +51,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="DrawView.ts" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="DrawView.ts" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/views/components/DrawView.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="311" column="0" selection-start="13059" selection-end="13059" vertical-scroll-proportion="-12.16">
+            <state line="265" column="43" selection-start="11342" selection-end="11342" vertical-scroll-proportion="0.6637168">
               <folding />
             </state>
           </provider>
@@ -78,7 +72,7 @@
       <file leaf-file-name="StateModel.ts" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/models/StateModel.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="64" column="0" selection-start="2053" selection-end="2053" vertical-scroll-proportion="0.0">
+            <state line="76" column="20" selection-start="2325" selection-end="2325" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -87,16 +81,16 @@
       <file leaf-file-name="UIView.ts" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/views/components/UIView.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="124" column="22" selection-start="3852" selection-end="3852" vertical-scroll-proportion="0.0">
+            <state line="119" column="20" selection-start="3685" selection-end="3685" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Main.ts" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Main.ts" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/Main.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="0" selection-start="994" selection-end="994" vertical-scroll-proportion="0.27070063">
+            <state line="22" column="44" selection-start="992" selection-end="992" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -149,11 +143,11 @@
         <option value="$PROJECT_DIR$/scripts/views/components/View.ts" />
         <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/scripts/views/components/StageView.ts" />
-        <option value="$PROJECT_DIR$/scripts/models/StateModel.ts" />
         <option value="$PROJECT_DIR$/scripts/views/shapes/CircleShape.ts" />
-        <option value="$PROJECT_DIR$/scripts/views/components/UIView.ts" />
         <option value="$PROJECT_DIR$/scripts/views/components/DrawView.ts" />
         <option value="$PROJECT_DIR$/scripts/Main.ts" />
+        <option value="$PROJECT_DIR$/scripts/models/StateModel.ts" />
+        <option value="$PROJECT_DIR$/scripts/views/components/UIView.ts" />
       </list>
     </option>
   </component>
@@ -556,13 +550,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/models/StateModel.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="0" selection-start="2053" selection-end="2053" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/views/components/View.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state line="15" column="27" selection-start="248" selection-end="248" vertical-scroll-proportion="0.0">
@@ -591,23 +578,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/Main.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="44" selection-start="992" selection-end="992" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/views/components/UIView.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="124" column="22" selection-start="3852" selection-end="3852" vertical-scroll-proportion="0.0">
+        <state line="119" column="20" selection-start="3685" selection-end="3685" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/models/StateModel.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="76" column="20" selection-start="2325" selection-end="2325" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/views/components/DrawView.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="311" column="0" selection-start="13059" selection-end="13059" vertical-scroll-proportion="-12.16">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/Main.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="0" selection-start="994" selection-end="994" vertical-scroll-proportion="0.27070063">
+        <state line="265" column="43" selection-start="11342" selection-end="11342" vertical-scroll-proportion="0.6637168">
           <folding />
         </state>
       </provider>
